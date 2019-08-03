@@ -33,12 +33,14 @@ class GetIndexAction extends AbstractAction
 		$index = new IndexEntity;
 		$this->addIndexUri( $index );
 		$this->addStationsUri( $index );
+		$this->addUsersUri( $index );
+		$this->addFavoritesUri( $index );
 
 		$responderData = [
 			'index' => $index,
 		];
-		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
-		$responder->respond();
+		( new JsonResponder( StatusCodes::OK, $responderData ) )
+			->respond();
 	}
 
 	private function addIndexUri( IndexEntity $index ): void
@@ -49,5 +51,15 @@ class GetIndexAction extends AbstractAction
 	private function addStationsUri( IndexEntity $index ): void
 	{
 		$index->stationsUri = $this->getUriBuilder()->getStationsUri();
+	}
+
+	private function addUsersUri( IndexEntity $index ): void
+	{
+		$index->usersUri = $this->getUriBuilder()->getUsersUri();
+	}
+
+	private function addFavoritesUri( IndexEntity $index ): void
+	{
+		$index->favoritesUri = $this->getUriBuilder()->getFavoritesUri();
 	}
 }
