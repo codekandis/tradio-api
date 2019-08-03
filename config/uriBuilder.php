@@ -10,15 +10,15 @@ return [
 		'stations'         => 'stations',
 		'station'          => 'stations/%s',
 		'currentTrack'     => 'stations/%s/tracklist/current-track',
-		'favorites'        => 'favorites',
-		'favorite'         => 'favorites/%s',
+		'stationUsers'     => 'stations/%s/users',
 		'stationFavorites' => 'stations/%s/favorites',
-		'stationFavorite'  => 'stations/%s/favorites/%s',
 		'users'            => 'users',
 		'user'             => 'users/%s',
 		'userStations'     => 'users/%s/stations',
-		'userStation'      => 'users/%s/stations/%s',
 		'userFavorites'    => 'users/%s/favorites',
-		'userFavorite'     => 'users/%s/favorites/%s'
+		'favorites'        => 'favorites',
+		'favorite'         => 'favorites/%s',
+		'favoriteStations' => 'favorites/%s/stations',
+		'favoriteUsers'    => 'favorites/%s/users'
 	]
 ];
