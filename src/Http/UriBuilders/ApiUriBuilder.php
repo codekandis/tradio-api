@@ -15,13 +15,63 @@ class ApiUriBuilder extends AbstractUriBuilder
 		return $this->getUri( 'stations' );
 	}
 
-	public function getStationUri( string $id ): string
+	public function getStationUri( string $stationId ): string
 	{
-		return $this->getUri( 'station', $id );
+		return $this->getUri( 'station', $stationId );
 	}
 
 	public function getCurrentTrackUri( string $stationId ): string
 	{
 		return $this->getUri( 'currentTrack', $stationId );
+	}
+
+	public function getStationUsersUri( string $stationId ): string
+	{
+		return $this->getUri( 'stationUsers', $stationId );
+	}
+
+	public function getStationFavoritesUri( string $stationId ): string
+	{
+		return $this->getUri( 'stationFavorites', $stationId );
+	}
+
+	public function getUsersUri(): string
+	{
+		return $this->getUri( 'users' );
+	}
+
+	public function getUserUri( string $userId ): string
+	{
+		return $this->getUri( 'user', $userId );
+	}
+
+	public function getUserStationsUri( string $userId ): string
+	{
+		return $this->getUri( 'userStations', $userId );
+	}
+
+	public function getUserFavoritesUri( string $userId ): string
+	{
+		return $this->getUri( 'userFavorites', $userId );
+	}
+
+	public function getFavoritesUri(): string
+	{
+		return $this->getUri( 'favorites' );
+	}
+
+	public function getFavoriteUri( string $favoriteId ): string
+	{
+		return $this->getUri( 'favorite', $favoriteId );
+	}
+
+	public function getFavoriteStationsUri( string $favoriteId ): string
+	{
+		return $this->getUri( 'favoriteStations', $favoriteId );
+	}
+
+	public function getFavoriteUsersUri( string $favoriteId ): string
+	{
+		return $this->getUri( 'favoriteUsers', $favoriteId );
 	}
 }
