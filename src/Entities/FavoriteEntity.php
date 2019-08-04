@@ -9,6 +9,9 @@ class FavoriteEntity extends AbstractEntity
 	public $uri = '';
 
 	/** @var string */
+	public $id = '';
+
+	/** @var string */
 	public $trackName = '';
 
 	/** @var string */
