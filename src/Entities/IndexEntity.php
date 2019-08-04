@@ -12,8 +12,8 @@ class IndexEntity extends AbstractEntity
 	public $stationsUri = '';
 
 	/** @var string */
-	public $favoritesUri = '';
+	public $usersUri = '';
 
 	/** @var string */
-	public $usersUri = '';
+	public $favoritesUri = '';
 }
