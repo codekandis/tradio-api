@@ -15,9 +15,6 @@ class UserEntity extends AbstractEntity
 	public $name = '';
 
 	/** @var string */
-	public $password = '';
-
-	/** @var string */
 	public $email = '';
 
 	/** @var string */
