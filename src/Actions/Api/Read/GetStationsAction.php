@@ -52,12 +52,14 @@ class GetStationsAction extends AbstractAction
 		$stations = $this->readStations();
 		$this->addStationsUris( $stations );
 		$this->addCurrentTrackUris( $stations );
+		$this->addStationUsersUris( $stations );
+		$this->addStationFavoritesUris( $stations );
 
 		$responderData = [
 			'stations' => $stations,
 		];
-		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
-		$responder->respond();
+		( new JsonResponder( StatusCodes::OK, $responderData ) )
+			->respond();
 	}
 
 	/**
@@ -79,6 +81,28 @@ class GetStationsAction extends AbstractAction
 		foreach ( $stations as $station )
 		{
 			$station->currentTrackUri = $this->getUriBuilder()->getCurrentTrackUri( $station->id );
+		}
+	}
+
+	/**
+	 * @param StationEntity[] $stations
+	 */
+	private function addStationUsersUris( array $stations ): void
+	{
+		foreach ( $stations as $station )
+		{
+			$station->usersUri = $this->getUriBuilder()->getStationUsersUri( $station->id );
+		}
+	}
+
+	/**
+	 * @param StationEntity[] $stations
+	 */
+	private function addStationFavoritesUris( array $stations ): void
+	{
+		foreach ( $stations as $station )
+		{
+			$station->favoritesUri = $this->getUriBuilder()->getStationFavoritesUri( $station->id );
 		}
 	}
 
