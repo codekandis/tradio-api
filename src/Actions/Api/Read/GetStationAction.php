@@ -57,20 +57,22 @@ class GetStationAction extends AbstractAction
 
 		if ( null === $station )
 		{
-			$responder = new JsonResponder( StatusCodes::NOT_FOUND, null );
-			$responder->respond();
+			( new JsonResponder( StatusCodes::NOT_FOUND, null ) )
+				->respond();
 
 			return;
 		}
 
 		$this->addStationUri( $station );
 		$this->addCurrentTrackUri( $station );
+		$this->addStationUsersUri( $station );
+		$this->addStationFavoritesUri( $station );
 
 		$responderData = [
 			'station' => $station
 		];
-		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
-		$responder->respond();
+		( new JsonResponder( StatusCodes::OK, $responderData ) )
+			->respond();
 	}
 
 	/**
@@ -89,6 +91,16 @@ class GetStationAction extends AbstractAction
 	private function addCurrentTrackUri( StationEntity $station ): void
 	{
 		$station->currentTrackUri = $this->getUriBuilder()->getCurrentTrackUri( $station->id );
+	}
+
+	private function addStationUsersUri( StationEntity $station ): void
+	{
+		$station->usersUri = $this->getUriBuilder()->getStationUsersUri( $station->id );
+	}
+
+	private function addStationFavoritesUri( StationEntity $station ): void
+	{
+		$station->favoritesUri = $this->getUriBuilder()->getStationFavoritesUri( $station->id );
 	}
 
 	/**
