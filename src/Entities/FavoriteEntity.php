@@ -1,0 +1,19 @@
+<?php declare( strict_types = 1 );
+namespace CodeKandis\TradioApi\Entities;
+
+use CodeKandis\Tiphy\Entities\AbstractEntity;
+
+class FavoriteEntity extends AbstractEntity
+{
+	/** @var string */
+	public $uri = '';
+
+	/** @var string */
+	public $trackName = '';
+
+	/** @var string */
+	public $stationsUri = '';
+
+	/** @var string */
+	public $usersUri = '';
+}
