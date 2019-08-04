@@ -30,5 +30,8 @@ class StationEntity extends AbstractEntity
 	public $currentTrackUri = '';
 
 	/** @var string */
+	public $usersUri = '';
+
+	/** @var string */
 	public $favoritesUri = '';
 }
