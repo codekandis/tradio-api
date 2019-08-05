@@ -9,6 +9,7 @@ use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
@@ -50,10 +51,7 @@ class GetStationsAction extends AbstractAction
 	public function execute(): void
 	{
 		$stations = $this->readStations();
-		$this->addStationsUris( $stations );
-		$this->addCurrentTrackUris( $stations );
-		$this->addStationUsersUris( $stations );
-		$this->addStationFavoritesUris( $stations );
+		$this->extendUris( $stations );
 
 		$responderData = [
 			'stations' => $stations,
@@ -65,44 +63,13 @@ class GetStationsAction extends AbstractAction
 	/**
 	 * @param StationEntity[] $stations
 	 */
-	private function addStationsUris( array $stations ): void
+	private function extendUris( array $stations ): void
 	{
+		$uriBuilder = $this->getUriBuilder();
 		foreach ( $stations as $station )
 		{
-			$station->uri = $this->getUriBuilder()->getStationUri( $station->id );
-		}
-	}
-
-	/**
-	 * @param StationEntity[] $stations
-	 */
-	private function addCurrentTrackUris( array $stations ): void
-	{
-		foreach ( $stations as $station )
-		{
-			$station->currentTrackUri = $this->getUriBuilder()->getCurrentTrackUri( $station->id );
-		}
-	}
-
-	/**
-	 * @param StationEntity[] $stations
-	 */
-	private function addStationUsersUris( array $stations ): void
-	{
-		foreach ( $stations as $station )
-		{
-			$station->usersUri = $this->getUriBuilder()->getStationUsersUri( $station->id );
-		}
-	}
-
-	/**
-	 * @param StationEntity[] $stations
-	 */
-	private function addStationFavoritesUris( array $stations ): void
-	{
-		foreach ( $stations as $station )
-		{
-			$station->favoritesUri = $this->getUriBuilder()->getStationFavoritesUri( $station->id );
+			( new StationUriExtender( $uriBuilder, $station ) )
+				->extend();
 		}
 	}
 
