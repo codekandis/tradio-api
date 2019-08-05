@@ -9,9 +9,12 @@ use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
+use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackUriExtender;
 use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
 
@@ -43,10 +46,11 @@ class GetCurrentTrackAction extends AbstractAction
 			return;
 		}
 
-		$currentTrack = $this->readCurrentTrack( $station );
-		$this->addCurrentTrackUri( $currentTrack, $station );
-		$this->addStationId( $currentTrack, $station );
-		$this->addStationUri( $currentTrack, $station );
+		$currentTrack            = $this->readCurrentTrack( $station );
+		$requestedFavorite       = new FavoriteEntity();
+		$requestedFavorite->name = $currentTrack->name;
+		$favorite                = $this->readFavoriteByTrackName( $requestedFavorite );
+		$this->extendUris( $currentTrack, $station, $favorite );
 
 		$responderData = [
 			'currentTrack' => $currentTrack
@@ -85,30 +89,22 @@ class GetCurrentTrackAction extends AbstractAction
 		return $this->arguments;
 	}
 
-	private function addCurrentTrackUri( CurrentTrackEntity $currentTrack, StationEntity $station ): void
+	private function extendUris( CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite ): void
 	{
-		$currentTrack->uri = $this->getUriBuilder()->getCurrentTrackUri( $station->id );
-	}
-
-	private function addStationId( CurrentTrackEntity $currentTrack, StationEntity $station ): void
-	{
-		$currentTrack->stationId = $station->id;
-	}
-
-	private function addStationUri( CurrentTrackEntity $currentTrack, StationEntity $station ): void
-	{
-		$currentTrack->stationUri = $this->getUriBuilder()->getStationUri( $station->id );
+		$uriBuilder = $this->getUriBuilder();
+		( new CurrentTrackUriExtender( $uriBuilder, $currentTrack, $station, $favorite ) )
+			->extend();
 	}
 
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $requestedChild ): ?StationEntity
+	private function readStation( StationEntity $requestedStation ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new StationsRepository( $databaseConnector ) )
-			->readStationById( $requestedChild );
+			->readStationById( $requestedStation );
 	}
 
 	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
@@ -118,5 +114,13 @@ class GetCurrentTrackAction extends AbstractAction
 			->read( $station->tracklistUri, $station->currentTrackXPath );
 
 		return $currentTrack;
+	}
+
+	private function readFavoriteByTrackName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	{
+		$databaseConnector = $this->getDatabaseConnector();
+
+		return ( new FavoritesRepository( $databaseConnector ) )
+			->readFavoriteByTrackName( $requestedFavorite );
 	}
 }
