@@ -25,7 +25,7 @@ class StationUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->station->uri = $this->uriBuilder->getStationUri( $this->station->id );
+		$this->station->canonicalUri = $this->uriBuilder->getStationUri( $this->station->id );
 	}
 
 	private function addCurrentTrackUri(): void

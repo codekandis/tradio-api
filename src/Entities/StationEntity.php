@@ -6,7 +6,7 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class StationEntity extends AbstractEntity
 {
 	/** @var string */
-	public $uri = '';
+	public $canonicalUri = '';
 
 	/** @var string */
 	public $id = '';
