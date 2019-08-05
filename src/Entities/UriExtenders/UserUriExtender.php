@@ -24,7 +24,7 @@ class UserUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->user->uri = $this->uriBuilder->getUserUri( $this->user->id );
+		$this->user->canonicalUri = $this->uriBuilder->getUserUri( $this->user->id );
 	}
 
 	private function addUserStationsUri(): void

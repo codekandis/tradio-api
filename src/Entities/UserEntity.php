@@ -6,7 +6,7 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class UserEntity extends AbstractEntity
 {
 	/** @var string */
-	public $uri = '';
+	public $canonicalUri = '';
 
 	/** @var string */
 	public $id = '';
