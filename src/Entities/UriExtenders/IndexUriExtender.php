@@ -25,7 +25,7 @@ class IndexUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->index->uri = $this->uriBuilder->getIndexUri();
+		$this->index->canonicalUri = $this->uriBuilder->getIndexUri();
 	}
 
 	private function addStationsUri(): void
