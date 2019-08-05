@@ -106,11 +106,11 @@ class GetStationAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $requestedChild ): ?StationEntity
+	private function readStation( StationEntity $requestedStation ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new StationsRepository( $databaseConnector ) )
-			->readStationById( $requestedChild );
+			->readStationById( $requestedStation );
 	}
 }
