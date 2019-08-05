@@ -6,6 +6,7 @@ use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\IndexEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\IndexUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use ReflectionException;
 
@@ -31,10 +32,7 @@ class GetIndexAction extends AbstractAction
 	public function execute(): void
 	{
 		$index = new IndexEntity;
-		$this->addIndexUri( $index );
-		$this->addStationsUri( $index );
-		$this->addUsersUri( $index );
-		$this->addFavoritesUri( $index );
+		$this->addUris( $index );
 
 		$responderData = [
 			'index' => $index,
@@ -43,23 +41,10 @@ class GetIndexAction extends AbstractAction
 			->respond();
 	}
 
-	private function addIndexUri( IndexEntity $index ): void
+	private function addUris( $index ): void
 	{
-		$index->uri = $this->getUriBuilder()->getIndexUri();
-	}
-
-	private function addStationsUri( IndexEntity $index ): void
-	{
-		$index->stationsUri = $this->getUriBuilder()->getStationsUri();
-	}
-
-	private function addUsersUri( IndexEntity $index ): void
-	{
-		$index->usersUri = $this->getUriBuilder()->getUsersUri();
-	}
-
-	private function addFavoritesUri( IndexEntity $index ): void
-	{
-		$index->favoritesUri = $this->getUriBuilder()->getFavoritesUri();
+		$uriBuilder = $this->getUriBuilder();
+		( new IndexUriExtender( $uriBuilder, $index ) )
+			->extend();
 	}
 }
