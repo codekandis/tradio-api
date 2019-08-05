@@ -12,7 +12,7 @@ class FavoriteEntity extends AbstractEntity
 	public $id = '';
 
 	/** @var string */
-	public $trackName = '';
+	public $name = '';
 
 	/** @var string */
 	public $stationsUri = '';
