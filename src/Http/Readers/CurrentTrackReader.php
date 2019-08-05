@@ -8,6 +8,7 @@ use function curl_close;
 use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
+use function mb_strtolower;
 use const CURLOPT_CUSTOMREQUEST;
 use const CURLOPT_HEADER;
 use const CURLOPT_RETURNTRANSFER;
@@ -41,6 +42,6 @@ class CurrentTrackReader implements CurrentTrackReaderInterface
 		$xPathResult = ( new DOMXPath( $domDocument ) )
 			->evaluate( $xPath );
 
-		return $xPathResult[ 0 ]->nodeValue;
+		return mb_strtolower( $xPathResult[ 0 ]->nodeValue );
 	}
 }
