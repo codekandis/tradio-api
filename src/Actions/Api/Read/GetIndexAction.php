@@ -32,7 +32,7 @@ class GetIndexAction extends AbstractAction
 	public function execute(): void
 	{
 		$index = new IndexEntity;
-		$this->addUris( $index );
+		$this->extendUris( $index );
 
 		$responderData = [
 			'index' => $index,
@@ -41,7 +41,7 @@ class GetIndexAction extends AbstractAction
 			->respond();
 	}
 
-	private function addUris( $index ): void
+	private function extendUris( $index ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
 		( new IndexUriExtender( $uriBuilder, $index ) )
