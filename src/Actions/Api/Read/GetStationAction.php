@@ -9,6 +9,7 @@ use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
@@ -63,10 +64,7 @@ class GetStationAction extends AbstractAction
 			return;
 		}
 
-		$this->addStationUri( $station );
-		$this->addCurrentTrackUri( $station );
-		$this->addStationUsersUri( $station );
-		$this->addStationFavoritesUri( $station );
+		$this->extendUris( $station );
 
 		$responderData = [
 			'station' => $station
@@ -83,24 +81,11 @@ class GetStationAction extends AbstractAction
 		return $this->arguments;
 	}
 
-	private function addStationUri( StationEntity $station ): void
+	private function extendUris( StationEntity $station ): void
 	{
-		$station->uri = $this->getUriBuilder()->getStationUri( $station->id );
-	}
-
-	private function addCurrentTrackUri( StationEntity $station ): void
-	{
-		$station->currentTrackUri = $this->getUriBuilder()->getCurrentTrackUri( $station->id );
-	}
-
-	private function addStationUsersUri( StationEntity $station ): void
-	{
-		$station->usersUri = $this->getUriBuilder()->getStationUsersUri( $station->id );
-	}
-
-	private function addStationFavoritesUri( StationEntity $station ): void
-	{
-		$station->favoritesUri = $this->getUriBuilder()->getStationFavoritesUri( $station->id );
+		$uriBuilder = $this->getUriBuilder();
+		( new StationUriExtender( $uriBuilder, $station ) )
+			->extend();
 	}
 
 	/**
