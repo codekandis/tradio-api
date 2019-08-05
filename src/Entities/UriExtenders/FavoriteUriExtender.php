@@ -24,7 +24,7 @@ class FavoriteUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->favorite->uri = $this->uriBuilder->getFavoriteUri( $this->favorite->id );
+		$this->favorite->canonicalUri = $this->uriBuilder->getFavoriteUri( $this->favorite->id );
 	}
 
 	private function addFavoriteStationsUri(): void
