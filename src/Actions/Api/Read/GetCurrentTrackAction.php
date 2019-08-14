@@ -62,8 +62,8 @@ class GetCurrentTrackAction extends AbstractAction
 
 		if ( null === $station )
 		{
-			$responder = new JsonResponder( StatusCodes::NOT_FOUND, null );
-			$responder->respond();
+			( new JsonResponder( StatusCodes::NOT_FOUND, null ) )
+				->respond();
 
 			return;
 		}
@@ -77,8 +77,9 @@ class GetCurrentTrackAction extends AbstractAction
 		$responderData = [
 			'currentTrack' => $currentTrack
 		];
-		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
-		$responder->respond();
+
+		( new JsonResponder( StatusCodes::OK, $responderData ) )
+			->respond();
 	}
 
 	/**
