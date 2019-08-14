@@ -2,6 +2,7 @@
 namespace CodeKandis\TradioApi\Actions\Api\Read;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
+use CodeKandis\Tiphy\Exceptions\ErrorInformation;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
@@ -10,6 +11,8 @@ use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
+use CodeKandis\TradioApi\Errors\StationsErrorCodes;
+use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
@@ -58,7 +61,8 @@ class GetStationAction extends AbstractAction
 
 		if ( null === $station )
 		{
-			( new JsonResponder( StatusCodes::NOT_FOUND, null ) )
+			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
+			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
 				->respond();
 
 			return;
