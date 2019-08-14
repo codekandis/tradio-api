@@ -2,6 +2,7 @@
 namespace CodeKandis\TradioApi\Actions\Api\Read;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
+use CodeKandis\Tiphy\Exceptions\ErrorInformation;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
@@ -11,6 +12,8 @@ use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\UriExtenders\UserUriExtender;
 use CodeKandis\TradioApi\Entities\UserEntity;
+use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
+use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
@@ -60,7 +63,8 @@ class GetFavoriteUsersAction extends AbstractAction
 
 		if ( null === $favorite )
 		{
-			( new JsonResponder( StatusCodes::NOT_FOUND, null ) )
+			$errorInformation = new ErrorInformation( FavoritesErrorCodes::FAVORITE_UNKNOWN, FavoritesErrorMessages::FAVORITE_UNKNOWN, $inputData );
+			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
 				->respond();
 
 			return;
