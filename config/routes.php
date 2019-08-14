@@ -33,7 +33,8 @@ return [
 		Methods::GET => Api\Read\GetUserStationsAction::class
 	],
 	'^/users/(?<id>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites$'                  => [
-		Methods::GET => Api\Read\GetUserFavoritesAction::class
+		Methods::GET => Api\Read\GetUserFavoritesAction::class,
+		Methods::PUT => Api\Write\AddUserFavoriteAction::class
 	],
 	'^/favorites$'                                                                           => [
 		Methods::GET => Api\Read\GetFavoritesAction::class
