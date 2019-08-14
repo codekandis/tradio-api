@@ -26,6 +26,28 @@ class GetCurrentTrackAction extends AbstractAction
 	/** @var ApiUriBuilder */
 	private $uriBuilder;
 
+	private function getDatabaseConnector(): ConnectorInterface
+	{
+		if ( null === $this->databaseConnector )
+		{
+			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
+			$this->databaseConnector = new Connector( $databaseConfig );
+		}
+
+		return $this->databaseConnector;
+	}
+
+	private function getUriBuilder(): ApiUriBuilder
+	{
+		if ( null === $this->uriBuilder )
+		{
+			$uriBuilderConfiguration = ConfigurationRegistry::_()->getUriBuilderConfiguration();
+			$this->uriBuilder        = new ApiUriBuilder( $uriBuilderConfiguration );
+		}
+
+		return $this->uriBuilder;
+	}
+
 	/**
 	 * @throws PersistenceException
 	 * @throws ReflectionException
@@ -57,28 +79,6 @@ class GetCurrentTrackAction extends AbstractAction
 		];
 		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
 		$responder->respond();
-	}
-
-	private function getDatabaseConnector(): ConnectorInterface
-	{
-		if ( null === $this->databaseConnector )
-		{
-			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
-			$this->databaseConnector = new Connector( $databaseConfig );
-		}
-
-		return $this->databaseConnector;
-	}
-
-	private function getUriBuilder(): ApiUriBuilder
-	{
-		if ( null === $this->uriBuilder )
-		{
-			$uriBuilderConfiguration = ConfigurationRegistry::_()->getUriBuilderConfiguration();
-			$this->uriBuilder        = new ApiUriBuilder( $uriBuilderConfiguration );
-		}
-
-		return $this->uriBuilder;
 	}
 
 	/**
