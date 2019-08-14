@@ -116,6 +116,9 @@ class GetCurrentTrackAction extends AbstractAction
 		return $currentTrack;
 	}
 
+	/**
+	 * @throws PersistenceException
+	 */
 	private function readFavoriteByTrackName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
