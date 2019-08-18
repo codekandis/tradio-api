@@ -3,6 +3,7 @@ namespace CodeKandis\TradioApi\Persistence\MariaDb\Repositories;
 
 use CodeKandis\Tiphy\Persistence\MariaDb\Repositories\AbstractRepository;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
+use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
@@ -192,5 +193,61 @@ class FavoritesRepository extends AbstractRepository
 		}
 
 		return $resultSet;
+	}
+
+	/**
+	 * @throws PersistenceException
+	 */
+	public function writeFavoriteByUserId( UserEntity $user, CurrentTrackEntity $currentTrack ): void
+	{
+		$query = <<< END
+			INSERT IGNORE INTO
+				`favorites`
+				( `id`, `name` )
+			VALUES
+				( UUID( ), :favoriteName );
+
+			INSERT IGNORE INTO
+				`users_favorites`
+				( `id`, `userId`, `favoriteId`)
+			SELECT
+			    UUID( ),
+			    :userId,
+			    `favorites`.`id`
+			FROM
+				`favorites`
+			WHERE
+				`favorites`.`name` = :favoriteName;
+
+			INSERT IGNORE INTO
+				`stations_favorites`
+				( `id`, `stationId`, `favoriteId`)
+			SELECT
+			    UUID( ),
+			    :stationId,
+			    `favorites`.`id`
+			FROM
+				`favorites`
+			WHERE
+				`favorites`.`name` = :favoriteName;
+		END;
+
+		$arguments = [
+			'userId'       => $user->id,
+			'stationId'    => $currentTrack->stationId,
+			'favoriteName' => $currentTrack->name
+		];
+
+		try
+		{
+			$this->databaseConnector->beginTransaction();
+			$this->databaseConnector->execute( $query, $arguments );
+			$this->databaseConnector->commit();
+		}
+		catch ( PersistenceException $exception )
+		{
+			$this->databaseConnector->rollback();
+			throw $exception;
+		}
 	}
 }
