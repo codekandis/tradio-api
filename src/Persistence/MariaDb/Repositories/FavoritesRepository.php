@@ -28,7 +28,7 @@ class FavoritesRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var FavoriteEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, null, FavoriteEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, null, FavoriteEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -64,7 +64,7 @@ class FavoritesRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var FavoriteEntity $result */
-			$result = $this->databaseConnector->queryFirstPrepared( $query, $arguments, FavoriteEntity::class );
+			$result = $this->databaseConnector->queryFirst( $query, $arguments, FavoriteEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -100,7 +100,7 @@ class FavoritesRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var FavoriteEntity $result */
-			$result = $this->databaseConnector->queryFirstPrepared( $query, $arguments, FavoriteEntity::class );
+			$result = $this->databaseConnector->queryFirst( $query, $arguments, FavoriteEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -141,7 +141,7 @@ class FavoritesRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var FavoriteEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, $arguments, FavoriteEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, $arguments, FavoriteEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -182,7 +182,7 @@ class FavoritesRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var FavoriteEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, $arguments, FavoriteEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, $arguments, FavoriteEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
