@@ -28,7 +28,7 @@ class StationsRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var StationEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, null, StationEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, null, StationEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -64,7 +64,7 @@ class StationsRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var StationEntity $result */
-			$result = $this->databaseConnector->queryFirstPrepared( $query, $arguments, StationEntity::class );
+			$result = $this->databaseConnector->queryFirst( $query, $arguments, StationEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -105,7 +105,7 @@ class StationsRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var StationEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, $arguments, StationEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, $arguments, StationEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -146,7 +146,7 @@ class StationsRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var StationEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, $arguments, StationEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, $arguments, StationEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
