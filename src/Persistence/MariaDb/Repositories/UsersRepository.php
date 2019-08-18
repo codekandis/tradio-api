@@ -28,7 +28,7 @@ class UsersRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var UserEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, null, UserEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, null, UserEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -64,7 +64,7 @@ class UsersRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var UserEntity $result */
-			$result = $this->databaseConnector->queryFirstPrepared( $query, $arguments, UserEntity::class );
+			$result = $this->databaseConnector->queryFirst( $query, $arguments, UserEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -105,7 +105,7 @@ class UsersRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var UserEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, $arguments, UserEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, $arguments, UserEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
@@ -146,7 +146,7 @@ class UsersRepository extends AbstractRepository
 		{
 			$this->databaseConnector->beginTransaction();
 			/** @var UserEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->queryPrepared( $query, $arguments, UserEntity::class );
+			$resultSet = $this->databaseConnector->query( $query, $arguments, UserEntity::class );
 			$this->databaseConnector->commit();
 		}
 		catch ( PersistenceException $exception )
