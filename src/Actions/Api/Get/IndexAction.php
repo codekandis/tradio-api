@@ -10,7 +10,7 @@ use CodeKandis\TradioApi\Entities\UriExtenders\IndexUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use ReflectionException;
 
-class GetIndexAction extends AbstractAction
+class IndexAction extends AbstractAction
 {
 	/** @var ApiUriBuilder */
 	private $uriBuilder;

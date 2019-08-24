@@ -10,16 +10,16 @@ use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\UserUriExtender;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
 use CodeKandis\TradioApi\Entities\UserEntity;
-use CodeKandis\TradioApi\Errors\StationsErrorCodes;
-use CodeKandis\TradioApi\Errors\StationsErrorMessages;
+use CodeKandis\TradioApi\Errors\UsersErrorCodes;
+use CodeKandis\TradioApi\Errors\UsersErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use ReflectionException;
 
-class GetStationUsersAction extends AbstractAction
+class UserStationsAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -57,24 +57,24 @@ class GetStationUsersAction extends AbstractAction
 	{
 		$inputData = $this->getInputData();
 
-		$requestedStation     = new StationEntity();
-		$requestedStation->id = $inputData[ 'id' ];
-		$station              = $this->readStation( $requestedStation );
+		$requestedUser     = new UserEntity();
+		$requestedUser->id = $inputData[ 'id' ];
+		$user              = $this->readUser( $requestedUser );
 
-		if ( null === $station )
+		if ( null === $user )
 		{
-			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
+			$errorInformation = new ErrorInformation( UsersErrorCodes::USER_UNKNOWN, UsersErrorMessages::USER_UNKNOWN, $inputData );
 			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
 				->respond();
 
 			return;
 		}
 
-		$users = $this->readStationUsers( $station );
-		$this->extendUris( $users );
+		$stations = $this->readUsersStations( $user );
+		$this->extendUris( $stations );
 
 		$responderData = [
-			'users' => $users,
+			'stations' => $stations,
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
@@ -89,14 +89,14 @@ class GetStationUsersAction extends AbstractAction
 	}
 
 	/**
-	 * @param UserEntity[] $users
+	 * @param StationEntity[] $stations
 	 */
-	private function extendUris( array $users ): void
+	private function extendUris( array $stations ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		foreach ( $users as $user )
+		foreach ( $stations as $station )
 		{
-			( new UserUriExtender( $uriBuilder, $user ) )
+			( new StationUriExtender( $uriBuilder, $station ) )
 				->extend();
 		}
 	}
@@ -104,23 +104,23 @@ class GetStationUsersAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $station ): ?StationEntity
-	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new StationsRepository( $databaseConnector ) )
-			->readStationById( $station );
-	}
-
-	/**
-	 * @return UserEntity[]
-	 * @throws PersistenceException
-	 */
-	private function readStationUsers( StationEntity $station ): array
+	private function readUser( UserEntity $requestedUser ): ?UserEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new UsersRepository( $databaseConnector ) )
-			->readUsersByStationId( $station );
+			->readUserById( $requestedUser );
+	}
+
+	/**
+	 * @return StationEntity[]
+	 * @throws PersistenceException
+	 */
+	private function readUsersStations( UserEntity $user ): array
+	{
+		$databaseConnector = $this->getDatabaseConnector();
+
+		return ( new StationsRepository( $databaseConnector ) )
+			->readStationsByUserId( $user );
 	}
 }

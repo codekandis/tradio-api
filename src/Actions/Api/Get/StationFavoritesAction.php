@@ -9,19 +9,17 @@ use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
-use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackUriExtender;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Errors\StationsErrorMessages;
-use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
 
-class GetCurrentTrackAction extends AbstractAction
+class StationFavoritesAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -72,16 +70,12 @@ class GetCurrentTrackAction extends AbstractAction
 			return;
 		}
 
-		$currentTrack            = $this->readCurrentTrack( $station );
-		$requestedFavorite       = new FavoriteEntity();
-		$requestedFavorite->name = $currentTrack->name;
-		$favorite                = $this->readFavoriteByTrackName( $requestedFavorite );
-		$this->extendUris( $currentTrack, $station, $favorite );
+		$favorites = $this->readStationsFavorites( $station );
+		$this->extendUris( $favorites );
 
 		$responderData = [
-			'currentTrack' => $currentTrack
+			'favorites' => $favorites,
 		];
-
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
 	}
@@ -94,11 +88,17 @@ class GetCurrentTrackAction extends AbstractAction
 		return $this->arguments;
 	}
 
-	private function extendUris( CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite ): void
+	/**
+	 * @param FavoriteEntity[] $favorites
+	 */
+	private function extendUris( array $favorites ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		( new CurrentTrackUriExtender( $uriBuilder, $currentTrack, $station, $favorite ) )
-			->extend();
+		foreach ( $favorites as $favorite )
+		{
+			( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+				->extend();
+		}
 	}
 
 	/**
@@ -112,24 +112,15 @@ class GetCurrentTrackAction extends AbstractAction
 			->readStationById( $requestedStation );
 	}
 
-	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
-	{
-		$currentTrack            = new CurrentTrackEntity();
-		$currentTrack->name      = ( new CurrentTrackReader() )
-			->read( $station->tracklistUri, $station->currentTrackXPath );
-		$currentTrack->stationId = $station->id;
-
-		return $currentTrack;
-	}
-
 	/**
+	 * @return FavoriteEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readFavoriteByTrackName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	private function readStationsFavorites( StationEntity $station ): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new FavoritesRepository( $databaseConnector ) )
-			->readFavoriteByTrackName( $requestedFavorite );
+			->readFavoritesByStationId( $station );
 	}
 }

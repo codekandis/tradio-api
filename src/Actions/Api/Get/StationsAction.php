@@ -8,13 +8,13 @@ use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
+use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
 
-class GetFavoritesAction extends AbstractAction
+class StationsAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -50,38 +50,38 @@ class GetFavoritesAction extends AbstractAction
 	 */
 	public function execute(): void
 	{
-		$favorites = $this->readFavorites();
-		$this->extendUris( $favorites );
+		$stations = $this->readStations();
+		$this->extendUris( $stations );
 
 		$responderData = [
-			'favorites' => $favorites,
+			'stations' => $stations,
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
 	}
 
 	/**
-	 * @param FavoriteEntity[] $favorites
+	 * @param StationEntity[] $stations
 	 */
-	private function extendUris( array $favorites ): void
+	private function extendUris( array $stations ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		foreach ( $favorites as $favorite )
+		foreach ( $stations as $station )
 		{
-			( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+			( new StationUriExtender( $uriBuilder, $station ) )
 				->extend();
 		}
 	}
 
 	/**
-	 * @return FavoriteEntity[]
+	 * @return StationEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readFavorites(): array
+	private function readStations(): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
-		return ( new FavoritesRepository( $databaseConnector ) )
-			->readFavorites();
+		return ( new StationsRepository( $databaseConnector ) )
+			->readStations();
 	}
 }

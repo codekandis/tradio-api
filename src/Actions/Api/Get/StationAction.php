@@ -9,15 +9,15 @@ use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
-use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
-use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
+use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
+use CodeKandis\TradioApi\Errors\StationsErrorCodes;
+use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
 
-class GetFavoriteAction extends AbstractAction
+class StationAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -55,23 +55,23 @@ class GetFavoriteAction extends AbstractAction
 	{
 		$inputData = $this->getInputData();
 
-		$requestedFavorite     = new FavoriteEntity();
-		$requestedFavorite->id = $inputData[ 'id' ];
-		$favorite              = $this->readFavorite( $requestedFavorite );
+		$requestedStation     = new StationEntity();
+		$requestedStation->id = $inputData[ 'id' ];
+		$station              = $this->readStation( $requestedStation );
 
-		if ( null === $favorite )
+		if ( null === $station )
 		{
-			$errorInformation = new ErrorInformation( FavoritesErrorCodes::FAVORITE_UNKNOWN, FavoritesErrorMessages::FAVORITE_UNKNOWN, $inputData );
+			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
 			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
 				->respond();
 
 			return;
 		}
 
-		$this->extendUris( $favorite );
+		$this->extendUris( $station );
 
 		$responderData = [
-			'favorite' => $favorite
+			'station' => $station
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
@@ -85,21 +85,21 @@ class GetFavoriteAction extends AbstractAction
 		return $this->arguments;
 	}
 
-	private function extendUris( FavoriteEntity $favorite ): void
+	private function extendUris( StationEntity $station ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+		( new StationUriExtender( $uriBuilder, $station ) )
 			->extend();
 	}
 
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readFavorite( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	private function readStation( StationEntity $requestedStation ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
-		return ( new FavoritesRepository( $databaseConnector ) )
-			->readFavoriteById( $requestedFavorite );
+		return ( new StationsRepository( $databaseConnector ) )
+			->readStationById( $requestedStation );
 	}
 }

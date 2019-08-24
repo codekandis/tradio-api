@@ -2,7 +2,6 @@
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
-use CodeKandis\Tiphy\Exceptions\ErrorInformation;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
@@ -11,13 +10,11 @@ use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\UriExtenders\UserUriExtender;
 use CodeKandis\TradioApi\Entities\UserEntity;
-use CodeKandis\TradioApi\Errors\UsersErrorCodes;
-use CodeKandis\TradioApi\Errors\UsersErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use ReflectionException;
 
-class GetUserAction extends AbstractAction
+class UsersAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -53,53 +50,38 @@ class GetUserAction extends AbstractAction
 	 */
 	public function execute(): void
 	{
-		$inputData = $this->getInputData();
-
-		$requestedUser     = new UserEntity();
-		$requestedUser->id = $inputData[ 'id' ];
-		$user              = $this->readUser( $requestedUser );
-
-		if ( null === $user )
-		{
-			$errorInformation = new ErrorInformation( UsersErrorCodes::USER_UNKNOWN, UsersErrorMessages::USER_UNKNOWN, $inputData );
-			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
-				->respond();
-
-			return;
-		}
-
-		$this->extendUris( $user );
+		$users = $this->readUsers();
+		$this->extendUris( $users );
 
 		$responderData = [
-			'user' => $user
+			'users' => $users,
 		];
-		( new JsonResponder( StatusCodes::OK, $responderData ) )
-			->respond();
+		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
+		$responder->respond();
 	}
 
 	/**
-	 * @return string[]
+	 * @param UserEntity[] $users
 	 */
-	private function getInputData(): array
-	{
-		return $this->arguments;
-	}
-
-	private function extendUris( UserEntity $user ): void
+	private function extendUris( array $users ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		( new UserUriExtender( $uriBuilder, $user ) )
-			->extend();
+		foreach ( $users as $user )
+		{
+			( new UserUriExtender( $uriBuilder, $user ) )
+				->extend();
+		}
 	}
 
 	/**
+	 * @return UserEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readUser( UserEntity $requestedUser ): ?UserEntity
+	private function readUsers(): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new UsersRepository( $databaseConnector ) )
-			->readUserById( $requestedUser );
+			->readUsers();
 	}
 }

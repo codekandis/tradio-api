@@ -9,15 +9,17 @@ use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
-use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
-use CodeKandis\TradioApi\Errors\StationsErrorCodes;
-use CodeKandis\TradioApi\Errors\StationsErrorMessages;
+use CodeKandis\TradioApi\Entities\FavoriteEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
+use CodeKandis\TradioApi\Entities\UserEntity;
+use CodeKandis\TradioApi\Errors\UsersErrorCodes;
+use CodeKandis\TradioApi\Errors\UsersErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use ReflectionException;
 
-class GetStationAction extends AbstractAction
+class UserFavoritesAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -55,23 +57,24 @@ class GetStationAction extends AbstractAction
 	{
 		$inputData = $this->getInputData();
 
-		$requestedStation     = new StationEntity();
-		$requestedStation->id = $inputData[ 'id' ];
-		$station              = $this->readStation( $requestedStation );
+		$requestedUser     = new UserEntity();
+		$requestedUser->id = $inputData[ 'id' ];
+		$user              = $this->readUser( $requestedUser );
 
-		if ( null === $station )
+		if ( null === $user )
 		{
-			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
+			$errorInformation = new ErrorInformation( UsersErrorCodes::USER_UNKNOWN, UsersErrorMessages::USER_UNKNOWN, $inputData );
 			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
 				->respond();
 
 			return;
 		}
 
-		$this->extendUris( $station );
+		$favorites = $this->readUsersFavorites( $user );
+		$this->extendUris( $favorites );
 
 		$responderData = [
-			'station' => $station
+			'favorites' => $favorites,
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
@@ -85,21 +88,39 @@ class GetStationAction extends AbstractAction
 		return $this->arguments;
 	}
 
-	private function extendUris( StationEntity $station ): void
+	/**
+	 * @param FavoriteEntity[] $favorites
+	 */
+	private function extendUris( array $favorites ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		( new StationUriExtender( $uriBuilder, $station ) )
-			->extend();
+		foreach ( $favorites as $favorite )
+		{
+			( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+				->extend();
+		}
 	}
 
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $requestedStation ): ?StationEntity
+	private function readUser( UserEntity $requestedUser ): ?UserEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
-		return ( new StationsRepository( $databaseConnector ) )
-			->readStationById( $requestedStation );
+		return ( new UsersRepository( $databaseConnector ) )
+			->readUserById( $requestedUser );
+	}
+
+	/**
+	 * @return FavoriteEntity[]
+	 * @throws PersistenceException
+	 */
+	private function readUsersFavorites( UserEntity $user ): array
+	{
+		$databaseConnector = $this->getDatabaseConnector();
+
+		return ( new FavoritesRepository( $databaseConnector ) )
+			->readFavoritesByUserId( $user );
 	}
 }
