@@ -1,5 +1,5 @@
 <?php declare( strict_types = 1 );
-namespace CodeKandis\TradioApi\Actions\Api\Read;
+namespace CodeKandis\TradioApi\Actions\Api\Get;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Exceptions\ErrorInformation;
@@ -9,17 +9,17 @@ use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
+use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
 use CodeKandis\TradioApi\Entities\UserEntity;
 use CodeKandis\TradioApi\Errors\UsersErrorCodes;
 use CodeKandis\TradioApi\Errors\UsersErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use ReflectionException;
 
-class GetUserFavoritesAction extends AbstractAction
+class GetUserStationsAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -70,11 +70,11 @@ class GetUserFavoritesAction extends AbstractAction
 			return;
 		}
 
-		$favorites = $this->readUsersFavorites( $user );
-		$this->extendUris( $favorites );
+		$stations = $this->readUsersStations( $user );
+		$this->extendUris( $stations );
 
 		$responderData = [
-			'favorites' => $favorites,
+			'stations' => $stations,
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
@@ -89,14 +89,14 @@ class GetUserFavoritesAction extends AbstractAction
 	}
 
 	/**
-	 * @param FavoriteEntity[] $favorites
+	 * @param StationEntity[] $stations
 	 */
-	private function extendUris( array $favorites ): void
+	private function extendUris( array $stations ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		foreach ( $favorites as $favorite )
+		foreach ( $stations as $station )
 		{
-			( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+			( new StationUriExtender( $uriBuilder, $station ) )
 				->extend();
 		}
 	}
@@ -113,14 +113,14 @@ class GetUserFavoritesAction extends AbstractAction
 	}
 
 	/**
-	 * @return FavoriteEntity[]
+	 * @return StationEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readUsersFavorites( UserEntity $user ): array
+	private function readUsersStations( UserEntity $user ): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
-		return ( new FavoritesRepository( $databaseConnector ) )
-			->readFavoritesByUserId( $user );
+		return ( new StationsRepository( $databaseConnector ) )
+			->readStationsByUserId( $user );
 	}
 }

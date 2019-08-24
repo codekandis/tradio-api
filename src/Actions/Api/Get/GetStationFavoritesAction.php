@@ -1,5 +1,5 @@
 <?php declare( strict_types = 1 );
-namespace CodeKandis\TradioApi\Actions\Api\Read;
+namespace CodeKandis\TradioApi\Actions\Api\Get;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Exceptions\ErrorInformation;
@@ -11,15 +11,15 @@ use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
-use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
-use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
+use CodeKandis\TradioApi\Errors\StationsErrorCodes;
+use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use ReflectionException;
 
-class GetFavoriteStationsAction extends AbstractAction
+class GetStationFavoritesAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -57,24 +57,24 @@ class GetFavoriteStationsAction extends AbstractAction
 	{
 		$inputData = $this->getInputData();
 
-		$requestedFavorite     = new FavoriteEntity();
-		$requestedFavorite->id = $inputData[ 'id' ];
-		$favorite              = $this->readFavorite( $requestedFavorite );
+		$requestedStation     = new StationEntity();
+		$requestedStation->id = $inputData[ 'id' ];
+		$station              = $this->readStation( $requestedStation );
 
-		if ( null === $favorite )
+		if ( null === $station )
 		{
-			$errorInformation = new ErrorInformation( FavoritesErrorCodes::FAVORITE_UNKNOWN, FavoritesErrorMessages::FAVORITE_UNKNOWN, $inputData );
+			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
 			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
 				->respond();
 
 			return;
 		}
 
-		$stations = $this->readFavoriteStations( $favorite );
-		$this->extendUris( $stations );
+		$favorites = $this->readStationsFavorites( $station );
+		$this->extendUris( $favorites );
 
 		$responderData = [
-			'stations' => $stations,
+			'favorites' => $favorites,
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
@@ -89,14 +89,14 @@ class GetFavoriteStationsAction extends AbstractAction
 	}
 
 	/**
-	 * @param StationEntity[] $stations
+	 * @param FavoriteEntity[] $favorites
 	 */
-	private function extendUris( array $stations ): void
+	private function extendUris( array $favorites ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		foreach ( $stations as $station )
+		foreach ( $favorites as $favorite )
 		{
-			( new StationUriExtender( $uriBuilder, $station ) )
+			( new FavoriteUriExtender( $uriBuilder, $favorite ) )
 				->extend();
 		}
 	}
@@ -104,23 +104,23 @@ class GetFavoriteStationsAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readFavorite( FavoriteEntity $favorite ): ?FavoriteEntity
-	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new FavoritesRepository( $databaseConnector ) )
-			->readFavoriteById( $favorite );
-	}
-
-	/**
-	 * @return StationEntity[]
-	 * @throws PersistenceException
-	 */
-	private function readFavoriteStations( FavoriteEntity $favorite ): array
+	private function readStation( StationEntity $requestedStation ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new StationsRepository( $databaseConnector ) )
-			->readStationsByFavoriteId( $favorite );
+			->readStationById( $requestedStation );
+	}
+
+	/**
+	 * @return FavoriteEntity[]
+	 * @throws PersistenceException
+	 */
+	private function readStationsFavorites( StationEntity $station ): array
+	{
+		$databaseConnector = $this->getDatabaseConnector();
+
+		return ( new FavoritesRepository( $databaseConnector ) )
+			->readFavoritesByStationId( $station );
 	}
 }

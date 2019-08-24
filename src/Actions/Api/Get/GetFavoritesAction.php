@@ -1,23 +1,20 @@
 <?php declare( strict_types = 1 );
-namespace CodeKandis\TradioApi\Actions\Api\Read;
+namespace CodeKandis\TradioApi\Actions\Api\Get;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
-use CodeKandis\Tiphy\Exceptions\ErrorInformation;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
-use CodeKandis\TradioApi\Entities\UriExtenders\UserUriExtender;
-use CodeKandis\TradioApi\Entities\UserEntity;
-use CodeKandis\TradioApi\Errors\UsersErrorCodes;
-use CodeKandis\TradioApi\Errors\UsersErrorMessages;
+use CodeKandis\TradioApi\Entities\FavoriteEntity;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use ReflectionException;
 
-class GetUserAction extends AbstractAction
+class GetFavoritesAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -53,53 +50,38 @@ class GetUserAction extends AbstractAction
 	 */
 	public function execute(): void
 	{
-		$inputData = $this->getInputData();
-
-		$requestedUser     = new UserEntity();
-		$requestedUser->id = $inputData[ 'id' ];
-		$user              = $this->readUser( $requestedUser );
-
-		if ( null === $user )
-		{
-			$errorInformation = new ErrorInformation( UsersErrorCodes::USER_UNKNOWN, UsersErrorMessages::USER_UNKNOWN, $inputData );
-			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
-				->respond();
-
-			return;
-		}
-
-		$this->extendUris( $user );
+		$favorites = $this->readFavorites();
+		$this->extendUris( $favorites );
 
 		$responderData = [
-			'user' => $user
+			'favorites' => $favorites,
 		];
 		( new JsonResponder( StatusCodes::OK, $responderData ) )
 			->respond();
 	}
 
 	/**
-	 * @return string[]
+	 * @param FavoriteEntity[] $favorites
 	 */
-	private function getInputData(): array
-	{
-		return $this->arguments;
-	}
-
-	private function extendUris( UserEntity $user ): void
+	private function extendUris( array $favorites ): void
 	{
 		$uriBuilder = $this->getUriBuilder();
-		( new UserUriExtender( $uriBuilder, $user ) )
-			->extend();
+		foreach ( $favorites as $favorite )
+		{
+			( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+				->extend();
+		}
 	}
 
 	/**
+	 * @return FavoriteEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readUser( UserEntity $requestedUser ): ?UserEntity
+	private function readFavorites(): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
-		return ( new UsersRepository( $databaseConnector ) )
-			->readUserById( $requestedUser );
+		return ( new FavoritesRepository( $databaseConnector ) )
+			->readFavorites();
 	}
 }

@@ -1,20 +1,25 @@
 <?php declare( strict_types = 1 );
-namespace CodeKandis\TradioApi\Actions\Api\Read;
+namespace CodeKandis\TradioApi\Actions\Api\Get;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
+use CodeKandis\Tiphy\Exceptions\ErrorInformation;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UriExtenders\UserUriExtender;
 use CodeKandis\TradioApi\Entities\UserEntity;
+use CodeKandis\TradioApi\Errors\StationsErrorCodes;
+use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use ReflectionException;
 
-class GetUsersAction extends AbstractAction
+class GetStationUsersAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -50,14 +55,37 @@ class GetUsersAction extends AbstractAction
 	 */
 	public function execute(): void
 	{
-		$users = $this->readUsers();
+		$inputData = $this->getInputData();
+
+		$requestedStation     = new StationEntity();
+		$requestedStation->id = $inputData[ 'id' ];
+		$station              = $this->readStation( $requestedStation );
+
+		if ( null === $station )
+		{
+			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
+			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
+				->respond();
+
+			return;
+		}
+
+		$users = $this->readStationUsers( $station );
 		$this->extendUris( $users );
 
 		$responderData = [
 			'users' => $users,
 		];
-		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
-		$responder->respond();
+		( new JsonResponder( StatusCodes::OK, $responderData ) )
+			->respond();
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function getInputData(): array
+	{
+		return $this->arguments;
 	}
 
 	/**
@@ -74,14 +102,25 @@ class GetUsersAction extends AbstractAction
 	}
 
 	/**
+	 * @throws PersistenceException
+	 */
+	private function readStation( StationEntity $station ): ?StationEntity
+	{
+		$databaseConnector = $this->getDatabaseConnector();
+
+		return ( new StationsRepository( $databaseConnector ) )
+			->readStationById( $station );
+	}
+
+	/**
 	 * @return UserEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readUsers(): array
+	private function readStationUsers( StationEntity $station ): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new UsersRepository( $databaseConnector ) )
-			->readUsers();
+			->readUsersByStationId( $station );
 	}
 }
