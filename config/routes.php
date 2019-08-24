@@ -34,7 +34,7 @@ return [
 	],
 	'^/users/(?<id>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites$'                  => [
 		Methods::GET => Api\Get\UserFavoritesAction::class,
-		Methods::PUT => Api\Write\UserFavoriteAction::class
+		Methods::PUT => Api\Put\UserFavoriteAction::class
 	],
 	'^/favorites$'                                                                           => [
 		Methods::GET => Api\Get\FavoritesAction::class
