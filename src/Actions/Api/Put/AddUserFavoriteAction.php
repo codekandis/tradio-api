@@ -1,5 +1,5 @@
 <?php declare( strict_types = 1 );
-namespace CodeKandis\TradioApi\Actions\Api\Write;
+namespace CodeKandis\TradioApi\Actions\Api\Put;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Exceptions\ErrorInformation;
