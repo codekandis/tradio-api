@@ -21,7 +21,7 @@ class UsersRepository extends AbstractRepository
 			FROM
 				`users`
 			ORDER BY
-			    `users`.`name` ASC;
+				`users`.`name` ASC;
 		END;
 
 		try
@@ -94,7 +94,7 @@ class UsersRepository extends AbstractRepository
 			WHERE
 				`users`.`id` = `users_stations`.`userId`
 			ORDER BY
-			    `users`.`name` ASC;
+				`users`.`name` ASC;
 		END;
 
 		$arguments = [
@@ -135,7 +135,7 @@ class UsersRepository extends AbstractRepository
 			WHERE
 				`users`.`id` = `users_favorites`.`userId`
 			ORDER BY
-			    `users`.`name` ASC;
+				`users`.`name` ASC;
 		END;
 
 		$arguments = [

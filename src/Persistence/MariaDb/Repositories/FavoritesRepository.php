@@ -22,7 +22,7 @@ class FavoritesRepository extends AbstractRepository
 			FROM
 				`favorites`
 			ORDER BY
-			    `favorites`.`name` ASC;
+				`favorites`.`name` ASC;
 		END;
 
 		try
@@ -131,7 +131,7 @@ class FavoritesRepository extends AbstractRepository
 			WHERE
 				`favorites`.`id` = `stations_favorites`.`favoriteId`
 			ORDER BY
-			    `favorites`.`name` ASC;
+				`favorites`.`name` ASC;
 		END;
 
 		$arguments = [
@@ -172,7 +172,7 @@ class FavoritesRepository extends AbstractRepository
 			WHERE
 				`favorites`.`id` = `users_favorites`.`favoriteId`
 			ORDER BY
-			    `favorites`.`name` ASC;
+				`favorites`.`name` ASC;
 		END;
 
 		$arguments = [
@@ -211,9 +211,9 @@ class FavoritesRepository extends AbstractRepository
 				`users_favorites`
 				( `id`, `userId`, `favoriteId`)
 			SELECT
-			    UUID( ),
-			    :userId,
-			    `favorites`.`id`
+				UUID( ),
+				:userId,
+				`favorites`.`id`
 			FROM
 				`favorites`
 			WHERE
@@ -223,9 +223,9 @@ class FavoritesRepository extends AbstractRepository
 				`stations_favorites`
 				( `id`, `stationId`, `favoriteId`)
 			SELECT
-			    UUID( ),
-			    :stationId,
-			    `favorites`.`id`
+				UUID( ),
+				:stationId,
+				`favorites`.`id`
 			FROM
 				`favorites`
 			WHERE
