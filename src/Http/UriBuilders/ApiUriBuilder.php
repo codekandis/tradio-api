@@ -60,11 +60,6 @@ class ApiUriBuilder extends AbstractUriBuilder
 		return $this->getUri( 'favorite', $favoriteId );
 	}
 
-	public function getFavoriteStationsUri( string $favoriteId ): string
-	{
-		return $this->getUri( 'favoriteStations', $favoriteId );
-	}
-
 	public function getFavoriteUsersUri( string $favoriteId ): string
 	{
 		return $this->getUri( 'favoriteUsers', $favoriteId );
