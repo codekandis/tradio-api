@@ -117,47 +117,6 @@ class FavoritesRepository extends AbstractRepository
 	 * @return FavoriteEntity[]
 	 * @throws PersistenceException
 	 */
-	public function readFavoritesByStationId( StationEntity $station ): array
-	{
-		$query = <<< END
-			SELECT
-				`favorites`.*
-			FROM
-				`favorites`
-			INNER JOIN
-				`stations_favorites`
-				ON
-				`stations_favorites`.`stationId` = :stationId
-			WHERE
-				`favorites`.`id` = `stations_favorites`.`favoriteId`
-			ORDER BY
-				`favorites`.`name` ASC;
-		END;
-
-		$arguments = [
-			'stationId' => $station->id
-		];
-
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var FavoriteEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, $arguments, FavoriteEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $resultSet;
-	}
-
-	/**
-	 * @return FavoriteEntity[]
-	 * @throws PersistenceException
-	 */
 	public function readFavoritesByUserId( UserEntity $user ): array
 	{
 		$query = <<< END
