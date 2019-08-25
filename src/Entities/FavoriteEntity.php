@@ -15,8 +15,5 @@ class FavoriteEntity extends AbstractEntity
 	public $name = '';
 
 	/** @var string */
-	public $stationsUri = '';
-
-	/** @var string */
 	public $usersUri = '';
 }
