@@ -15,7 +15,7 @@ use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
 use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
-use ReflectionException;
+use JsonException;
 
 class FavoriteAction extends AbstractAction
 {
@@ -49,7 +49,7 @@ class FavoriteAction extends AbstractAction
 
 	/**
 	 * @throws PersistenceException
-	 * @throws ReflectionException
+	 * @throws JsonException
 	 */
 	public function execute(): void
 	{

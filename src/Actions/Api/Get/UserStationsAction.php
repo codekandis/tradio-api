@@ -17,7 +17,7 @@ use CodeKandis\TradioApi\Errors\UsersErrorMessages;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
-use ReflectionException;
+use JsonException;
 
 class UserStationsAction extends AbstractAction
 {
@@ -51,7 +51,7 @@ class UserStationsAction extends AbstractAction
 
 	/**
 	 * @throws PersistenceException
-	 * @throws ReflectionException
+	 * @throws JsonException
 	 */
 	public function execute(): void
 	{

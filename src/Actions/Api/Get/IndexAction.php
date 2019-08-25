@@ -8,7 +8,7 @@ use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\IndexEntity;
 use CodeKandis\TradioApi\Entities\UriExtenders\IndexUriExtender;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
-use ReflectionException;
+use JsonException;
 
 class IndexAction extends AbstractAction
 {
@@ -27,7 +27,7 @@ class IndexAction extends AbstractAction
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * @throws JsonException
 	 */
 	public function execute(): void
 	{

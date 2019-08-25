@@ -19,7 +19,7 @@ use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
-use ReflectionException;
+use JsonException;
 
 class CurrentTrackAction extends AbstractAction
 {
@@ -53,7 +53,7 @@ class CurrentTrackAction extends AbstractAction
 
 	/**
 	 * @throws PersistenceException
-	 * @throws ReflectionException
+	 * @throws JsonException
 	 */
 	public function execute(): void
 	{
