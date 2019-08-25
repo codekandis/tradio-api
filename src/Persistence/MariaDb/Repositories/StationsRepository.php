@@ -116,45 +116,4 @@ class StationsRepository extends AbstractRepository
 
 		return $resultSet;
 	}
-
-	/**
-	 * @return StationEntity[]
-	 * @throws PersistenceException
-	 */
-	public function readStationsByFavoriteId( FavoriteEntity $favorite ): array
-	{
-		$query = <<< END
-			SELECT
-				`stations`.*
-			FROM
-				`stations`
-			INNER JOIN
-				`stations_favorites`
-				ON
-				`stations_favorites`.`favoriteId` = :favoriteId
-			WHERE
-				`stations`.`id` = `stations_favorites`.`stationId`
-			ORDER BY
-				`stations`.`name` ASC;
-		END;
-
-		$arguments = [
-			'favoriteId' => $favorite->id
-		];
-
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var StationEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, $arguments, StationEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $resultSet;
-	}
 }
