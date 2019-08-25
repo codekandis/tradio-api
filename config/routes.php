@@ -20,9 +20,6 @@ return [
 	'^/stations/(?<id>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users$'                   => [
 		Methods::GET => Api\Get\StationUsersAction::class
 	],
-	'^/stations/(?<id>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites$'               => [
-		Methods::GET => Api\Get\StationFavoritesAction::class
-	],
 	'^/users$'                                                                               => [
 		Methods::GET => Api\Get\UsersAction::class
 	],
