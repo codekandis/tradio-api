@@ -20,7 +20,6 @@ class StationUriExtender extends AbstractUriExtender
 		$this->addCanonicalUri();
 		$this->addCurrentTrackUri();
 		$this->addStationUsersUri();
-		$this->addStationFavoritesUri();
 	}
 
 	private function addCanonicalUri(): void
@@ -36,10 +35,5 @@ class StationUriExtender extends AbstractUriExtender
 	private function addStationUsersUri(): void
 	{
 		$this->station->usersUri = $this->uriBuilder->getStationUsersUri( $this->station->id );
-	}
-
-	private function addStationFavoritesUri(): void
-	{
-		$this->station->favoritesUri = $this->uriBuilder->getStationFavoritesUri( $this->station->id );
 	}
 }
