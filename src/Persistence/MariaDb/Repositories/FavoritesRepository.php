@@ -5,7 +5,6 @@ use CodeKandis\Tiphy\Persistence\MariaDb\Repositories\AbstractRepository;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
 
 class FavoritesRepository extends AbstractRepository
@@ -177,23 +176,10 @@ class FavoritesRepository extends AbstractRepository
 				`favorites`
 			WHERE
 				`favorites`.`name` = :favoriteName;
-
-			INSERT IGNORE INTO
-				`stations_favorites`
-				( `id`, `stationId`, `favoriteId`)
-			SELECT
-				UUID( ),
-				:stationId,
-				`favorites`.`id`
-			FROM
-				`favorites`
-			WHERE
-				`favorites`.`name` = :favoriteName;
 		END;
 
 		$arguments = [
 			'userId'       => $user->id,
-			'stationId'    => $currentTrack->stationId,
 			'favoriteName' => $currentTrack->name
 		];
 
