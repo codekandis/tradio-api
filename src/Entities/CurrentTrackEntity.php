@@ -12,6 +12,9 @@ class CurrentTrackEntity extends AbstractEntity
 	public $name = '';
 
 	/** @var string */
+	public $stationId = '';
+
+	/** @var string */
 	public $stationUri = '';
 
 	/** @var ?string */
