@@ -3,7 +3,6 @@ namespace CodeKandis\TradioApi\Persistence\MariaDb\Repositories;
 
 use CodeKandis\Tiphy\Persistence\MariaDb\Repositories\AbstractRepository;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
-use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
 
@@ -156,7 +155,7 @@ class FavoritesRepository extends AbstractRepository
 	/**
 	 * @throws PersistenceException
 	 */
-	public function writeFavoriteByUserId( UserEntity $user, CurrentTrackEntity $currentTrack ): void
+	public function writeFavoriteByUserId( UserEntity $user, FavoriteEntity $favoriteEntity ): void
 	{
 		$query = <<< END
 			INSERT IGNORE INTO
@@ -180,7 +179,7 @@ class FavoritesRepository extends AbstractRepository
 
 		$arguments = [
 			'userId'       => $user->id,
-			'favoriteName' => $currentTrack->name
+			'favoriteName' => $favoriteEntity->name
 		];
 
 		try
