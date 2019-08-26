@@ -114,9 +114,10 @@ class GetCurrentTrackAction extends AbstractAction
 
 	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
 	{
-		$currentTrack       = new CurrentTrackEntity();
-		$currentTrack->name = ( new CurrentTrackReader() )
+		$currentTrack            = new CurrentTrackEntity();
+		$currentTrack->name      = ( new CurrentTrackReader() )
 			->read( $station->tracklistUri, $station->currentTrackXPath );
+		$currentTrack->stationId = $station->id;
 
 		return $currentTrack;
 	}
