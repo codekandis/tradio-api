@@ -79,7 +79,7 @@ class FavoritesRepository extends AbstractRepository
 	/**
 	 * @throws PersistenceException
 	 */
-	public function readFavoriteByTrackName( FavoriteEntity $favorite ): ?FavoriteEntity
+	public function readFavoriteByName( FavoriteEntity $favorite ): ?FavoriteEntity
 	{
 		$query = <<< END
 			SELECT
