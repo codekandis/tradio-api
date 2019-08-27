@@ -56,7 +56,7 @@ class FavoriteAction extends AbstractAction
 		$inputData = $this->getInputData();
 
 		$requestedFavorite     = new FavoriteEntity();
-		$requestedFavorite->id = $inputData[ 'id' ];
+		$requestedFavorite->id = $inputData[ 'favoriteId' ];
 		$favorite              = $this->readFavorite( $requestedFavorite );
 
 		if ( null === $favorite )
