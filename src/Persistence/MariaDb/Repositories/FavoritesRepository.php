@@ -155,7 +155,7 @@ class FavoritesRepository extends AbstractRepository
 	/**
 	 * @throws PersistenceException
 	 */
-	public function writeFavoriteByUserId( UserEntity $user, FavoriteEntity $favoriteEntity ): void
+	public function writeFavoriteByUserId( FavoriteEntity $favoriteEntity, UserEntity $user ): void
 	{
 		$query = <<< END
 			INSERT IGNORE INTO
