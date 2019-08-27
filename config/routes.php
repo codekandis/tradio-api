@@ -36,10 +36,10 @@ return [
 	'^/favorites$'                                                                                  => [
 		Methods::GET => Api\Get\FavoritesAction::class
 	],
-	'^/favorites/(?<id>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$'                               => [
+	'^/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$'                       => [
 		Methods::GET => Api\Get\FavoriteAction::class
 	],
-	'^/favorites/(?<id>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users$'                         => [
+	'^/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users$'                 => [
 		Methods::GET => Api\Get\FavoriteUsersAction::class
 	]
 ];
