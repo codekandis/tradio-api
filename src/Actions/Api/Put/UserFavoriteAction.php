@@ -95,7 +95,7 @@ class UserFavoriteAction extends AbstractAction
 		$currentTrack   = $this->readCurrentTrack( $station );
 		$favorite       = new FavoriteEntity();
 		$favorite->name = $currentTrack->name;
-		$this->writeFavoriteByUserId( $user, $favorite );
+		$this->writeFavoriteByUserId( $favorite, $user );
 
 		( new JsonResponder( StatusCodes::OK, null ) )
 			->respond();
@@ -179,11 +179,11 @@ class UserFavoriteAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function writeFavoriteByUserId( UserEntity $user, FavoriteEntity $favorite ): void
+	private function writeFavoriteByUserId( FavoriteEntity $favorite, UserEntity $user ): void
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		( new FavoritesRepository( $databaseConnector ) )
-			->writeFavoriteByUserId( $user, $favorite );
+			->writeFavoriteByUserId( $favorite, $user );
 	}
 }
