@@ -58,7 +58,7 @@ class UserStationsAction extends AbstractAction
 		$inputData = $this->getInputData();
 
 		$requestedUser     = new UserEntity();
-		$requestedUser->id = $inputData[ 'id' ];
+		$requestedUser->id = $inputData[ 'userId' ];
 		$user              = $this->readUser( $requestedUser );
 
 		if ( null === $user )

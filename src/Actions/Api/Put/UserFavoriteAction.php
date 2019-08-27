@@ -67,7 +67,7 @@ class UserFavoriteAction extends AbstractAction
 
 		/** @var UserEntity $requestedUser */
 		$requestedUser     = new UserEntity();
-		$requestedUser->id = $inputData[ 'id' ];
+		$requestedUser->id = $inputData[ 'userId' ];
 		$user              = $this->readUser( $requestedUser );
 
 		if ( null === $user )
