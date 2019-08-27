@@ -194,4 +194,49 @@ class FavoritesRepository extends AbstractRepository
 			throw $exception;
 		}
 	}
+
+	/**
+	 * @throws PersistenceException
+	 */
+	public function deleteFavoriteByUserId( FavoriteEntity $favorite, UserEntity $user ): void
+	{
+		$query = <<< END
+			DELETE
+			FROM
+				`users_favorites`
+			WHERE
+				`users_favorites`.`userId` = :userId
+				AND
+				`users_favorites`.`favoriteId` = :favoriteId;
+
+			DELETE
+				`favorites`
+			FROM
+				`favorites`
+			LEFT JOIN
+				`users_favorites`
+			ON
+				`users_favorites`.`favoriteId` = `favorites`.`id`
+			WHERE
+				`users_favorites`.`id` IS NULL;
+			
+		END;
+
+		$arguments = [
+			'userId'     => $user->id,
+			'favoriteId' => $favorite->id
+		];
+
+		try
+		{
+			$this->databaseConnector->beginTransaction();
+			$this->databaseConnector->execute( $query, $arguments );
+			$this->databaseConnector->commit();
+		}
+		catch ( PersistenceException $exception )
+		{
+			$this->databaseConnector->rollback();
+			throw $exception;
+		}
+	}
 }
