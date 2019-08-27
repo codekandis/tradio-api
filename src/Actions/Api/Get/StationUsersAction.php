@@ -58,7 +58,7 @@ class StationUsersAction extends AbstractAction
 		$inputData = $this->getInputData();
 
 		$requestedStation     = new StationEntity();
-		$requestedStation->id = $inputData[ 'id' ];
+		$requestedStation->id = $inputData[ 'stationId' ];
 		$station              = $this->readStation( $requestedStation );
 
 		if ( null === $station )
