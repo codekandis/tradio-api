@@ -11,6 +11,7 @@ use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
+use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
 use CodeKandis\TradioApi\Errors\CommonErrorCodes;
@@ -91,8 +92,10 @@ class UserFavoriteAction extends AbstractAction
 			return;
 		}
 
-		$currentTrack = $this->readCurrentTrack( $station );
-		$this->writeFavoriteByUserId( $user, $currentTrack );
+		$currentTrack   = $this->readCurrentTrack( $station );
+		$favorite       = new FavoriteEntity();
+		$favorite->name = $currentTrack->name;
+		$this->writeFavoriteByUserId( $user, $favorite );
 
 		( new JsonResponder( StatusCodes::OK, null ) )
 			->respond();
@@ -176,11 +179,11 @@ class UserFavoriteAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function writeFavoriteByUserId( UserEntity $user, CurrentTrackEntity $currentTrack ): void
+	private function writeFavoriteByUserId( UserEntity $user, FavoriteEntity $favorite ): void
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		( new FavoritesRepository( $databaseConnector ) )
-			->writeFavoriteByUserId( $user, $currentTrack );
+			->writeFavoriteByUserId( $user, $favorite );
 	}
 }
