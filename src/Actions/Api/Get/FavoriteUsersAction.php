@@ -59,7 +59,7 @@ class FavoriteUsersAction extends AbstractAction
 
 		$requestedFavorite     = new FavoriteEntity();
 		$requestedFavorite->id = $inputData[ 'favoriteId' ];
-		$favorite              = $this->readFavorite( $requestedFavorite );
+		$favorite              = $this->readFavoriteById( $requestedFavorite );
 
 		if ( null === $favorite )
 		{
@@ -70,7 +70,7 @@ class FavoriteUsersAction extends AbstractAction
 			return;
 		}
 
-		$users = $this->readFavoriteUsers( $favorite );
+		$users = $this->readUsersByFavoriteId( $favorite );
 		$this->extendUris( $users );
 
 		$responderData = [
@@ -104,7 +104,7 @@ class FavoriteUsersAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readFavorite( FavoriteEntity $favorite ): ?FavoriteEntity
+	private function readFavoriteById( FavoriteEntity $favorite ): ?FavoriteEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
@@ -116,7 +116,7 @@ class FavoriteUsersAction extends AbstractAction
 	 * @return UserEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readFavoriteUsers( FavoriteEntity $favorite ): array
+	private function readUsersByFavoriteId( FavoriteEntity $favorite ): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 

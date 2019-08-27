@@ -75,7 +75,7 @@ class CurrentTrackAction extends AbstractAction
 		$currentTrack            = $this->readCurrentTrack( $station );
 		$requestedFavorite       = new FavoriteEntity();
 		$requestedFavorite->name = $currentTrack->name;
-		$favorite                = $this->readFavoriteByTrackName( $requestedFavorite );
+		$favorite                = $this->readFavoriteByName( $requestedFavorite );
 		$this->extendUris( $currentTrack, $station, $favorite );
 
 		$responderData = [
@@ -125,11 +125,11 @@ class CurrentTrackAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readFavoriteByTrackName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	private function readFavoriteByName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
 		return ( new FavoritesRepository( $databaseConnector ) )
-			->readFavoriteByTrackName( $requestedFavorite );
+			->readFavoriteByName( $requestedFavorite );
 	}
 }

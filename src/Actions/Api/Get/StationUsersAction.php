@@ -59,7 +59,7 @@ class StationUsersAction extends AbstractAction
 
 		$requestedStation     = new StationEntity();
 		$requestedStation->id = $inputData[ 'stationId' ];
-		$station              = $this->readStation( $requestedStation );
+		$station              = $this->readStationById( $requestedStation );
 
 		if ( null === $station )
 		{
@@ -70,7 +70,7 @@ class StationUsersAction extends AbstractAction
 			return;
 		}
 
-		$users = $this->readStationUsers( $station );
+		$users = $this->readUsersByStationId( $station );
 		$this->extendUris( $users );
 
 		$responderData = [
@@ -104,7 +104,7 @@ class StationUsersAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $station ): ?StationEntity
+	private function readStationById( StationEntity $station ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
@@ -116,7 +116,7 @@ class StationUsersAction extends AbstractAction
 	 * @return UserEntity[]
 	 * @throws PersistenceException
 	 */
-	private function readStationUsers( StationEntity $station ): array
+	private function readUsersByStationId( StationEntity $station ): array
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 

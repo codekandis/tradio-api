@@ -57,7 +57,7 @@ class StationAction extends AbstractAction
 
 		$requestedStation     = new StationEntity();
 		$requestedStation->id = $inputData[ 'stationId' ];
-		$station              = $this->readStation( $requestedStation );
+		$station              = $this->readStationById( $requestedStation );
 
 		if ( null === $station )
 		{
@@ -95,7 +95,7 @@ class StationAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $requestedStation ): ?StationEntity
+	private function readStationById( StationEntity $requestedStation ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 

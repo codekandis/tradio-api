@@ -57,7 +57,7 @@ class FavoriteAction extends AbstractAction
 
 		$requestedFavorite     = new FavoriteEntity();
 		$requestedFavorite->id = $inputData[ 'favoriteId' ];
-		$favorite              = $this->readFavorite( $requestedFavorite );
+		$favorite              = $this->readFavoriteById( $requestedFavorite );
 
 		if ( null === $favorite )
 		{
@@ -95,7 +95,7 @@ class FavoriteAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readFavorite( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	private function readFavoriteById( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 

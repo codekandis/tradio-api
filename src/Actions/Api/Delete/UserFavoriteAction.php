@@ -45,7 +45,7 @@ class UserFavoriteAction extends AbstractAction
 
 		$requestedUser     = new UserEntity();
 		$requestedUser->id = $inputData[ 'userId' ];
-		$user              = $this->readUser( $requestedUser );
+		$user              = $this->readUserById( $requestedUser );
 
 		if ( null === $user )
 		{
@@ -58,7 +58,7 @@ class UserFavoriteAction extends AbstractAction
 
 		$requestedFavorite     = new FavoriteEntity();
 		$requestedFavorite->id = $inputData[ 'favoriteId' ];
-		$favorite              = $this->readFavorite( $requestedFavorite );
+		$favorite              = $this->readFavoriteById( $requestedFavorite );
 
 		if ( null === $favorite )
 		{
@@ -69,7 +69,7 @@ class UserFavoriteAction extends AbstractAction
 			return;
 		}
 
-		$this->deleteFavorite( $user, $favorite );
+		$this->deleteFavoriteByUserId( $user, $favorite );
 
 		( new JsonResponder( StatusCodes::OK, null ) )
 			->respond();
@@ -86,7 +86,7 @@ class UserFavoriteAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readUser( UserEntity $requestedUser ): ?UserEntity
+	private function readUserById( UserEntity $requestedUser ): ?UserEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
@@ -97,7 +97,7 @@ class UserFavoriteAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readFavorite( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	private function readFavoriteById( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
@@ -108,7 +108,7 @@ class UserFavoriteAction extends AbstractAction
 	/**
 	 * @throws PersistenceException
 	 */
-	private function deleteFavorite( UserEntity $user, FavoriteEntity $favorite ): void
+	private function deleteFavoriteByUserId( UserEntity $user, FavoriteEntity $favorite ): void
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 

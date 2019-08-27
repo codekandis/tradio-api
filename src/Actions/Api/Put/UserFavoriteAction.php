@@ -81,7 +81,7 @@ class UserFavoriteAction extends AbstractAction
 
 		/** @var StationEntity $requestedStation */
 		$requestedStation = StationEntity::fromObject( $inputData[ 'station' ] );
-		$station          = $this->readStation( $requestedStation );
+		$station          = $this->readStationById( $requestedStation );
 
 		if ( null === $station )
 		{
@@ -143,10 +143,21 @@ class UserFavoriteAction extends AbstractAction
 		return $bodyData + $argumentsData;
 	}
 
+	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
+	{
+		$currentTrackName        = ( new CurrentTrackReader() )
+			->read( $station->tracklistUri, $station->currentTrackXPath );
+		$currentTrack            = new CurrentTrackEntity();
+		$currentTrack->stationId = $station->id;
+		$currentTrack->name      = $currentTrackName;
+
+		return $currentTrack;
+	}
+
 	/**
 	 * @throws PersistenceException
 	 */
-	private function readStation( StationEntity $requestedStation ): ?StationEntity
+	private function readStationById( StationEntity $requestedStation ): ?StationEntity
 	{
 		$databaseConnector = $this->getDatabaseConnector();
 
@@ -163,17 +174,6 @@ class UserFavoriteAction extends AbstractAction
 
 		return ( new UsersRepository( $databaseConnector ) )
 			->readUserById( $requestedUser );
-	}
-
-	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
-	{
-		$currentTrackName        = ( new CurrentTrackReader() )
-			->read( $station->tracklistUri, $station->currentTrackXPath );
-		$currentTrack            = new CurrentTrackEntity();
-		$currentTrack->stationId = $station->id;
-		$currentTrack->name      = $currentTrackName;
-
-		return $currentTrack;
 	}
 
 	/**
