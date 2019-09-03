@@ -11,7 +11,6 @@ return [
 		'station'          => 'stations/%s',
 		'currentTrack'     => 'stations/%s/tracklist/current-track',
 		'stationUsers'     => 'stations/%s/users',
-		'stationFavorites' => 'stations/%s/favorites',
 		'users'            => 'users',
 		'user'             => 'users/%s',
 		'userStations'     => 'users/%s/stations',
