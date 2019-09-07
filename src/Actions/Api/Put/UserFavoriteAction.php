@@ -3,6 +3,7 @@ namespace CodeKandis\TradioApi\Actions\Api\Put;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Exceptions\ErrorInformation;
+use CodeKandis\Tiphy\Http\ContentTypes;
 use CodeKandis\Tiphy\Http\Requests\BadRequestException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
@@ -106,7 +107,7 @@ class UserFavoriteAction extends AbstractAction
 	 */
 	private function getInputData(): array
 	{
-		if ( 'application/json' !== strtolower( $_SERVER[ 'CONTENT_TYPE' ] ) )
+		if ( ContentTypes::APPLICATION_JSON !== strtolower( $_SERVER[ 'CONTENT_TYPE' ] ) )
 		{
 			throw new BadRequestException( CommonErrorMessages::INVALID_CONTENT_TYPE, CommonErrorCodes::INVALID_CONTENT_TYPE );
 		}
