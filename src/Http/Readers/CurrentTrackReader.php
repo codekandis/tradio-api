@@ -42,6 +42,6 @@ class CurrentTrackReader implements CurrentTrackReaderInterface
 		$xPathResult = ( new DOMXPath( $domDocument ) )
 			->evaluate( $xPath );
 
-		return mb_strtolower( $xPathResult[ 0 ]->nodeValue );
+		return mb_strtolower( $xPathResult );
 	}
 }
