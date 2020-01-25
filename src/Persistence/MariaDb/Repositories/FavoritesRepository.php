@@ -20,7 +20,7 @@ class FavoritesRepository extends AbstractRepository
 			FROM
 				`favorites`
 			ORDER BY
-				`favorites`.`name` ASC;
+				`favorites`.`createdOn` DESC;
 		END;
 
 		try
@@ -129,7 +129,7 @@ class FavoritesRepository extends AbstractRepository
 			WHERE
 				`favorites`.`id` = `users_favorites`.`favoriteId`
 			ORDER BY
-				`favorites`.`name` ASC;
+				`favorites`.`createdOn` DESC;
 		END;
 
 		$arguments = [
