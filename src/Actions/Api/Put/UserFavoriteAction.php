@@ -2,7 +2,6 @@
 namespace CodeKandis\TradioApi\Actions\Api\Put;
 
 use CodeKandis\Tiphy\Actions\AbstractAction;
-use CodeKandis\Tiphy\Exceptions\ErrorInformation;
 use CodeKandis\Tiphy\Http\ContentTypes;
 use CodeKandis\Tiphy\Http\Requests\BadRequestException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
@@ -10,6 +9,7 @@ use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
 use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
+use CodeKandis\Tiphy\Throwables\ErrorInformation;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
