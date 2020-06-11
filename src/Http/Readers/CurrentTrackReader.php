@@ -1,15 +1,21 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Http\Readers;
 
+use CodeKandis\CodeMessageInterpreter\CodeMessageInterpreter;
 use CodeKandis\Tiphy\Http\Requests\Methods;
+use CodeKandis\TradioApi\Errors\CurlErrorCodes;
+use CodeKandis\TradioApi\Errors\CurlErrorMessages;
+use CodeKandis\TradioApi\Errors\CurlException;
 use DOMDocument;
 use DOMXPath;
 use function curl_close;
+use function curl_errno;
 use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
 use function mb_strtolower;
 use const CURLOPT_CUSTOMREQUEST;
+use const CURLOPT_FAILONERROR;
 use const CURLOPT_HEADER;
 use const CURLOPT_RETURNTRANSFER;
 use const CURLOPT_URL;
@@ -24,6 +30,7 @@ class CurrentTrackReader implements CurrentTrackReaderInterface
 		curl_setopt_array(
 			$curlHandler,
 			[
+				CURLOPT_FAILONERROR    => true,
 				CURLOPT_URL            => $uri,
 				CURLOPT_CUSTOMREQUEST  => Methods::GET,
 				CURLOPT_USERAGENT      => 'Mozilla',
@@ -31,7 +38,14 @@ class CurrentTrackReader implements CurrentTrackReaderInterface
 				CURLOPT_RETURNTRANSFER => true,
 			]
 		);
+
 		$response = curl_exec( $curlHandler );
+		if ( $curlErrorCode = curl_errno( $curlHandler ) )
+		{
+			$curlErrorMessage = ( new CodeMessageInterpreter( CurlErrorCodes::class, CurlErrorMessages::class ) )
+				->interpret( $curlErrorCode );
+			throw new CurlException( $curlErrorMessage, $curlErrorCode );
+		}
 		curl_close( $curlHandler );
 
 		$domDocument = new DOMDocument();
