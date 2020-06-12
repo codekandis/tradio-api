@@ -3,65 +3,65 @@ namespace CodeKandis\TradioApi\Http\UriBuilders;
 
 use CodeKandis\Tiphy\Http\UriBuilders\AbstractUriBuilder;
 
-class ApiUriBuilder extends AbstractUriBuilder
+class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 {
-	public function getIndexUri(): string
+	public function buildIndexUri(): string
 	{
-		return $this->getUri( 'index' );
+		return $this->build( 'index' );
 	}
 
-	public function getStationsUri(): string
+	public function buildStationsUri(): string
 	{
-		return $this->getUri( 'stations' );
+		return $this->build( 'stations' );
 	}
 
-	public function getStationUri( string $stationId ): string
+	public function buildStationUri( string $stationId ): string
 	{
-		return $this->getUri( 'station', $stationId );
+		return $this->build( 'station', $stationId );
 	}
 
-	public function getCurrentTrackUri( string $stationId ): string
+	public function buildCurrentTrackUri( string $stationId ): string
 	{
-		return $this->getUri( 'currentTrack', $stationId );
+		return $this->build( 'currentTrack', $stationId );
 	}
 
-	public function getStationUsersUri( string $stationId ): string
+	public function buildStationUsersUri( string $stationId ): string
 	{
-		return $this->getUri( 'stationUsers', $stationId );
+		return $this->build( 'stationUsers', $stationId );
 	}
 
-	public function getUsersUri(): string
+	public function buildUsersUri(): string
 	{
-		return $this->getUri( 'users' );
+		return $this->build( 'users' );
 	}
 
-	public function getUserUri( string $userId ): string
+	public function buildUserUri( string $userId ): string
 	{
-		return $this->getUri( 'user', $userId );
+		return $this->build( 'user', $userId );
 	}
 
-	public function getUserStationsUri( string $userId ): string
+	public function buildUserStationsUri( string $userId ): string
 	{
-		return $this->getUri( 'userStations', $userId );
+		return $this->build( 'userStations', $userId );
 	}
 
-	public function getUserFavoritesUri( string $userId ): string
+	public function buildUserFavoritesUri( string $userId ): string
 	{
-		return $this->getUri( 'userFavorites', $userId );
+		return $this->build( 'userFavorites', $userId );
 	}
 
-	public function getFavoritesUri(): string
+	public function buildFavoritesUri(): string
 	{
-		return $this->getUri( 'favorites' );
+		return $this->build( 'favorites' );
 	}
 
-	public function getFavoriteUri( string $favoriteId ): string
+	public function buildFavoriteUri( string $favoriteId ): string
 	{
-		return $this->getUri( 'favorite', $favoriteId );
+		return $this->build( 'favorite', $favoriteId );
 	}
 
-	public function getFavoriteUsersUri( string $favoriteId ): string
+	public function buildFavoriteUsersUri( string $favoriteId ): string
 	{
-		return $this->getUri( 'favoriteUsers', $favoriteId );
+		return $this->build( 'favoriteUsers', $favoriteId );
 	}
 }
