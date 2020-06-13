@@ -2,14 +2,14 @@
 namespace CodeKandis\TradioApi\Entities\UriExtenders;
 
 use CodeKandis\Tiphy\Entities\UriExtenders\UriExtenderInterface;
-use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
+use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
 abstract class AbstractUriExtender implements UriExtenderInterface
 {
-	/** @var ApiUriBuilder */
+	/** @var ApiUriBuilderInterface */
 	protected $uriBuilder;
 
-	public function __construct( ApiUriBuilder $uriBuilder )
+	public function __construct( ApiUriBuilderInterface $uriBuilder )
 	{
 		$this->uriBuilder = $uriBuilder;
 	}

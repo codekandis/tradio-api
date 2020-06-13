@@ -4,7 +4,7 @@ namespace CodeKandis\TradioApi\Entities\UriExtenders;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
+use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
 class CurrentTrackUriExtender extends AbstractUriExtender
 {
@@ -17,7 +17,7 @@ class CurrentTrackUriExtender extends AbstractUriExtender
 	/** @var ?FavoriteEntity */
 	private $favorite;
 
-	public function __construct( ApiUriBuilder $uriBuilder, CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite )
+	public function __construct( ApiUriBuilderInterface $uriBuilder, CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite )
 	{
 		parent::__construct( $uriBuilder );
 		$this->currentTrack = $currentTrack;
@@ -34,18 +34,18 @@ class CurrentTrackUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->currentTrack->canonicalUri = $this->uriBuilder->getCurrentTrackUri( $this->station->id );
+		$this->currentTrack->canonicalUri = $this->uriBuilder->buildCurrentTrackUri( $this->station->id );
 	}
 
 	private function addStationUri(): void
 	{
-		$this->currentTrack->stationUri = $this->uriBuilder->getStationUri( $this->station->id );
+		$this->currentTrack->stationUri = $this->uriBuilder->buildStationUri( $this->station->id );
 	}
 
 	private function addFavoriteUri(): void
 	{
 		$this->currentTrack->favoriteUri = null === $this->favorite
 			? null
-			: $this->uriBuilder->getFavoriteUri( $this->favorite->id );
+			: $this->uriBuilder->buildFavoriteUri( $this->favorite->id );
 	}
 }

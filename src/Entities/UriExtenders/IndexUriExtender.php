@@ -2,14 +2,14 @@
 namespace CodeKandis\TradioApi\Entities\UriExtenders;
 
 use CodeKandis\TradioApi\Entities\IndexEntity;
-use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
+use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
 class IndexUriExtender extends AbstractUriExtender
 {
 	/** @var IndexEntity */
 	private $index;
 
-	public function __construct( ApiUriBuilder $uriBuilder, IndexEntity $index )
+	public function __construct( ApiUriBuilderInterface $uriBuilder, IndexEntity $index )
 	{
 		parent::__construct( $uriBuilder );
 		$this->index = $index;
@@ -25,21 +25,21 @@ class IndexUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->index->canonicalUri = $this->uriBuilder->getIndexUri();
+		$this->index->canonicalUri = $this->uriBuilder->buildIndexUri();
 	}
 
 	private function addStationsUri(): void
 	{
-		$this->index->stationsUri = $this->uriBuilder->getStationsUri();
+		$this->index->stationsUri = $this->uriBuilder->buildStationsUri();
 	}
 
 	private function addUsersUri(): void
 	{
-		$this->index->usersUri = $this->uriBuilder->getUsersUri();
+		$this->index->usersUri = $this->uriBuilder->buildUsersUri();
 	}
 
 	private function addFavoritesUri(): void
 	{
-		$this->index->favoritesUri = $this->uriBuilder->getFavoritesUri();
+		$this->index->favoritesUri = $this->uriBuilder->buildFavoritesUri();
 	}
 }
