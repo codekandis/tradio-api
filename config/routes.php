@@ -34,7 +34,7 @@ return [
 		Methods::PUT => Api\Put\UserFavoriteByCurrentTrackAction::class
 	],
 	'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites/plain$'                                                      => [
-		Methods::PUT => Api\Put\UserPlainFavoritesAction::class
+		Methods::PUT => Api\Put\UserFavoritesAction::class
 	],
 	'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$' => [
 		Methods::DELETE => Api\Delete\UserFavoriteAction::class

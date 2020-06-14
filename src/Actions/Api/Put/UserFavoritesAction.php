@@ -28,7 +28,7 @@ use ReflectionException;
 use function is_object;
 use function strtolower;
 
-class UserPlainFavoritesAction extends AbstractAction
+class UserFavoritesAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
