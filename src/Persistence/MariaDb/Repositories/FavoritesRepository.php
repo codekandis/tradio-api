@@ -158,11 +158,13 @@ class FavoritesRepository extends AbstractRepository
 	public function writeFavoriteByUserId( FavoriteEntity $favoriteEntity, UserEntity $user ): void
 	{
 		$query = <<< END
-			INSERT IGNORE INTO
+			INSERT INTO
 				`favorites`
-				( `id`, `name` )
+				( `id`, `name`, `createdOn` )
 			VALUES
-				( UUID( ), :favoriteName );
+				( UUID( ), LOWER( :favoriteName ), :createdOn )
+			ON DUPLICATE KEY UPDATE
+				`createdOn` = IF ( `createdOn` IS NULL OR `createdOn` > :createdOn, :createdOn, `createdOn` );
 
 			INSERT IGNORE INTO
 				`users_favorites`
@@ -179,7 +181,8 @@ class FavoritesRepository extends AbstractRepository
 
 		$arguments = [
 			'userId'       => $user->id,
-			'favoriteName' => $favoriteEntity->name
+			'favoriteName' => $favoriteEntity->name,
+			'createdOn'    => $favoriteEntity->createdOn
 		];
 
 		try

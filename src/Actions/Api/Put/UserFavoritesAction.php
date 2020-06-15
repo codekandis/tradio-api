@@ -28,7 +28,7 @@ use ReflectionException;
 use function is_object;
 use function strtolower;
 
-class UserPlainFavoritesAction extends AbstractAction
+class UserFavoritesAction extends AbstractAction
 {
 	/** @var ConnectorInterface */
 	private $databaseConnector;
@@ -78,11 +78,12 @@ class UserPlainFavoritesAction extends AbstractAction
 			return;
 		}
 
-		$favoritesNames = $inputData[ 'favorites' ];
-		foreach ( $favoritesNames as $favoriteName )
+		foreach ( $inputData[ 'favorites' ] as $sentFavorite )
 		{
-			$favorite       = new FavoriteEntity();
-			$favorite->name = strtolower( $favoriteName );
+			/**
+			 * @var FavoriteEntity $favorite
+			 */
+			$favorite = FavoriteEntity::fromObject( $sentFavorite );
 			$this->writeFavoriteByUserId( $favorite, $user );
 		}
 
