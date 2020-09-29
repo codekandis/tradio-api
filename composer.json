@@ -30,7 +30,8 @@
 		"codekandis/tiphy": "^0",
 		"codekandis/sentry-client": "dev-development",
 		"codekandis/tiphy-sentry-client-integration": "^0",
-		"codekandis/code-message-interpreter": "^1"
+		"codekandis/code-message-interpreter": "^1",
+		"codekandis/authentication": "^0"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-master",
@@ -44,8 +45,7 @@
 			"CodeKandis\\TradioApi\\": [
 				"config/",
 				"public/",
-				"src/",
-				"templates/"
+				"src/"
 			]
 		}
 	},
