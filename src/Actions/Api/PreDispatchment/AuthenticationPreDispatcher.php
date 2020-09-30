@@ -70,6 +70,8 @@ class AuthenticationPreDispatcher implements PreDispatcherInterface
 		if ( null === $authorizationHeader || 'Key' !== $authorizationHeader->getType() )
 		{
 			$this->respondUnauthorized( $dispatchmentState );
+
+			return;
 		}
 
 		$clientCredentials = new KeyBasedClientCredentials( $authorizationHeader->getValue() );
