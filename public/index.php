@@ -4,6 +4,7 @@ namespace CodeKandis\TradioApi;
 use CodeKandis\SentryClient\SentryClient;
 use CodeKandis\Tiphy\Actions\ActionDispatcher;
 use CodeKandis\TiphySentryClientIntegration\Throwables\Handlers\InternalServerErrorThrowableHandler;
+use CodeKandis\TradioApi\Actions\Api\PreDispatchment\AuthenticationPreDispatcher;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use function error_reporting;
 use function ini_set;
@@ -11,7 +12,6 @@ use const E_ALL;
 
 /**
  * Represents the bootstrap script of the project.
- *
  * @package codekandis/tradio-api
  * @author  Christian Ramelow <info@codekandis.net>
  */
@@ -27,7 +27,9 @@ $configurationRegistry = ConfigurationRegistry::_();
 $sentryClient = new SentryClient( $configurationRegistry->getSentryClientConfiguration() );
 $sentryClient->register();
 
-$routesConfiguration = $configurationRegistry->getRoutesConfiguration();
-$throwableHandler    = new InternalServerErrorThrowableHandler( $sentryClient );
-$actionDispatcher    = new ActionDispatcher( $routesConfiguration, $throwableHandler );
+$actionDispatcher = new ActionDispatcher(
+	$configurationRegistry->getRoutesConfiguration(),
+	new AuthenticationPreDispatcher(),
+	new InternalServerErrorThrowableHandler( $sentryClient )
+);
 $actionDispatcher->dispatch();
