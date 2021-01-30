@@ -6,47 +6,47 @@ use CodeKandis\TradioApi\Actions\Api;
 
 return [
 	'routes' => [
-		'^/$'                                                                                                                                  => [
+		'/'                                                                                                                                  => [
 			Methods::GET => Api\Get\IndexAction::class
 		],
-		'^/stations$'                                                                                                                          => [
+		'/stations'                                                                                                                          => [
 			Methods::GET => Api\Get\StationsAction::class
 		],
-		'^/stations/(?<stationId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$'                                                                => [
+		'/stations/(?<stationId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})'                                                                => [
 			Methods::GET => Api\Get\StationAction::class
 		],
-		'^/stations/(?<stationId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/tracklist/current-track$'                                        => [
+		'/stations/(?<stationId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/tracklist/current-track'                                        => [
 			Methods::GET => Api\Get\CurrentTrackAction::class
 		],
-		'^/stations/(?<stationId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users$'                                                          => [
+		'/stations/(?<stationId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users'                                                          => [
 			Methods::GET => Api\Get\StationUsersAction::class
 		],
-		'^/users$'                                                                                                                             => [
+		'/users'                                                                                                                             => [
 			Methods::GET => Api\Get\UsersAction::class
 		],
-		'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$'                                                                      => [
+		'/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})'                                                                      => [
 			Methods::GET => Api\Get\UserAction::class
 		],
-		'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/stations$'                                                             => [
+		'/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/stations'                                                             => [
 			Methods::GET => Api\Get\UserStationsAction::class
 		],
-		'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites$'                                                            => [
+		'/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites'                                                            => [
 			Methods::GET => Api\Get\UserFavoritesAction::class,
 			Methods::PUT => Api\Put\UserFavoriteByCurrentTrackAction::class
 		],
-		'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites/plain$'                                                      => [
+		'/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites/plain'                                                      => [
 			Methods::PUT => Api\Put\UserFavoritesAction::class
 		],
-		'^/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$' => [
+		'/users/(?<userId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})' => [
 			Methods::DELETE => Api\Delete\UserFavoriteAction::class
 		],
-		'^/favorites$'                                                                                                                         => [
+		'/favorites'                                                                                                                         => [
 			Methods::GET => Api\Get\FavoritesAction::class
 		],
-		'^/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$'                                                              => [
+		'/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})'                                                              => [
 			Methods::GET => Api\Get\FavoriteAction::class
 		],
-		'^/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users$'                                                        => [
+		'/favorites/(?<favoriteId>[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})/users'                                                        => [
 			Methods::GET => Api\Get\FavoriteUsersAction::class
 		]
 	]
