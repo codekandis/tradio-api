@@ -61,10 +61,10 @@ class FavoriteUsersAction extends AbstractWithDatabaseConnectorAndApiUriBuilderA
 	 */
 	private function extendUris( array $users ): void
 	{
-		$uriBuilder = $this->getApiUriBuilder();
+		$apiUriBuilder = $this->getApiUriBuilder();
 		foreach ( $users as $user )
 		{
-			( new UserApiUriExtender( $uriBuilder, $user ) )
+			( new UserApiUriExtender( $apiUriBuilder, $user ) )
 				->extend();
 		}
 	}
