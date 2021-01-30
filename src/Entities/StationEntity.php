@@ -6,29 +6,29 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class StationEntity extends AbstractEntity
 {
 	/** @var string */
-	public $canonicalUri = '';
+	public string $canonicalUri = '';
 
 	/** @var string */
-	public $id = '';
+	public string $id = '';
 
 	/** @var string */
-	public $serverType = '';
+	public string $serverType = '';
 
 	/** @var string */
-	public $name = '';
+	public string $name = '';
 
 	/** @var string */
-	public $streamUri = '';
+	public string $streamUri = '';
 
 	/** @var string */
-	public $tracklistUri = '';
+	public string $tracklistUri = '';
 
 	/** @var string */
-	public $currentTrackXPath = '';
+	public string $currentTrackXPath = '';
 
 	/** @var string */
-	public $currentTrackUri = '';
+	public string $currentTrackUri = '';
 
 	/** @var string */
-	public $usersUri = '';
+	public string $usersUri = '';
 }

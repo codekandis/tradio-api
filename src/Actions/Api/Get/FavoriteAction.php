@@ -1,52 +1,20 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
-use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
-use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAndApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteUriExtender;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteApiUriExtender;
 use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
 use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
-use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use JsonException;
 
-class FavoriteAction extends AbstractAction
+class FavoriteAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
 {
-	/** @var ConnectorInterface */
-	private $databaseConnector;
-
-	/** @var ApiUriBuilder */
-	private $uriBuilder;
-
-	private function getDatabaseConnector(): ConnectorInterface
-	{
-		if ( null === $this->databaseConnector )
-		{
-			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
-			$this->databaseConnector = new Connector( $databaseConfig );
-		}
-
-		return $this->databaseConnector;
-	}
-
-	private function getUriBuilder(): ApiUriBuilder
-	{
-		if ( null === $this->uriBuilder )
-		{
-			$uriBuilderConfiguration = ConfigurationRegistry::_()->getUriBuilderConfiguration();
-			$this->uriBuilder        = new ApiUriBuilder( $uriBuilderConfiguration );
-		}
-
-		return $this->uriBuilder;
-	}
-
 	/**
 	 * @throws PersistenceException
 	 * @throws JsonException
@@ -87,8 +55,8 @@ class FavoriteAction extends AbstractAction
 
 	private function extendUris( FavoriteEntity $favorite ): void
 	{
-		$uriBuilder = $this->getUriBuilder();
-		( new FavoriteUriExtender( $uriBuilder, $favorite ) )
+		$apiUriBuilder = $this->getApiUriBuilder();
+		( new FavoriteApiUriExtender( $apiUriBuilder, $favorite ) )
 			->extend();
 	}
 
@@ -97,9 +65,9 @@ class FavoriteAction extends AbstractAction
 	 */
 	private function readFavoriteById( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new FavoritesRepository( $databaseConnector ) )
+		return ( new FavoritesRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readFavoriteById( $requestedFavorite );
 	}
 }

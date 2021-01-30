@@ -6,17 +6,17 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class UserEntity extends AbstractEntity
 {
 	/** @var string */
-	public $id = '';
+	public string $id = '';
 
 	/** @var string */
-	public $isActive = '';
+	public string $isActive = '';
 
 	/** @var string */
-	public $name = '';
+	public string $name = '';
 
 	/** @var string */
-	public $email = '';
+	public string $email = '';
 
 	/** @var string */
-	public $apiKey = '';
+	public string $apiKey = '';
 }

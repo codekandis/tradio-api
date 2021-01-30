@@ -4,14 +4,14 @@ namespace CodeKandis\TradioApi\Entities\UriExtenders;
 use CodeKandis\TradioApi\Entities\UserEntity;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
-class UserUriExtender extends AbstractUriExtender
+class UserApiUriExtender extends AbstractApiUriExtender
 {
 	/** @var UserEntity */
-	private $user;
+	private UserEntity $user;
 
-	public function __construct( ApiUriBuilderInterface $uriBuilder, UserEntity $user )
+	public function __construct( ApiUriBuilderInterface $apiUriBuilder, UserEntity $user )
 	{
-		parent::__construct( $uriBuilder );
+		parent::__construct( $apiUriBuilder );
 		$this->user = $user;
 	}
 
@@ -24,16 +24,16 @@ class UserUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->user->canonicalUri = $this->uriBuilder->buildUserUri( $this->user->id );
+		$this->user->canonicalUri = $this->apiUriBuilder->buildUserUri( $this->user->id );
 	}
 
 	private function addUserStationsUri(): void
 	{
-		$this->user->stationsUri = $this->uriBuilder->buildUserStationsUri( $this->user->id );
+		$this->user->stationsUri = $this->apiUriBuilder->buildUserStationsUri( $this->user->id );
 	}
 
 	private function addUserFavoritesUri(): void
 	{
-		$this->user->favoritesUri = $this->uriBuilder->buildUserFavoritesUri( $this->user->id );
+		$this->user->favoritesUri = $this->apiUriBuilder->buildUserFavoritesUri( $this->user->id );
 	}
 }

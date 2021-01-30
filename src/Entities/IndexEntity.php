@@ -6,14 +6,14 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class IndexEntity extends AbstractEntity
 {
 	/** @var string */
-	public $canonicalUri = '';
+	public string $canonicalUri = '';
 
 	/** @var string */
-	public $stationsUri = '';
+	public string $stationsUri = '';
 
 	/** @var string */
-	public $usersUri = '';
+	public string $usersUri = '';
 
 	/** @var string */
-	public $favoritesUri = '';
+	public string $favoritesUri = '';
 }
