@@ -6,17 +6,17 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class FavoriteEntity extends AbstractEntity
 {
 	/** @var string */
-	public $canonicalUri = '';
+	public string $canonicalUri = '';
 
 	/** @var string */
-	public $id = '';
+	public string $id = '';
 
 	/** @var string */
-	public $name = '';
+	public string $name = '';
 
 	/** @var string */
-	public $usersUri = '';
+	public string $usersUri = '';
 
-	/** @var ?string */
-	public $createdOn = null;
+	/** @var null|string */
+	public ?string $createdOn = null;
 }

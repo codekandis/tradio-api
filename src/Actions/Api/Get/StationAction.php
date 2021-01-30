@@ -1,52 +1,20 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
-use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
-use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAndApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\StationUriExtender;
+use CodeKandis\TradioApi\Entities\UriExtenders\StationApiUriExtender;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Errors\StationsErrorMessages;
-use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use JsonException;
 
-class StationAction extends AbstractAction
+class StationAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
 {
-	/** @var ConnectorInterface */
-	private $databaseConnector;
-
-	/** @var ApiUriBuilder */
-	private $uriBuilder;
-
-	private function getDatabaseConnector(): ConnectorInterface
-	{
-		if ( null === $this->databaseConnector )
-		{
-			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
-			$this->databaseConnector = new Connector( $databaseConfig );
-		}
-
-		return $this->databaseConnector;
-	}
-
-	private function getUriBuilder(): ApiUriBuilder
-	{
-		if ( null === $this->uriBuilder )
-		{
-			$uriBuilderConfiguration = ConfigurationRegistry::_()->getUriBuilderConfiguration();
-			$this->uriBuilder        = new ApiUriBuilder( $uriBuilderConfiguration );
-		}
-
-		return $this->uriBuilder;
-	}
-
 	/**
 	 * @throws PersistenceException
 	 * @throws JsonException
@@ -87,8 +55,10 @@ class StationAction extends AbstractAction
 
 	private function extendUris( StationEntity $station ): void
 	{
-		$uriBuilder = $this->getUriBuilder();
-		( new StationUriExtender( $uriBuilder, $station ) )
+		( new StationApiUriExtender(
+			$this->getApiUriBuilder(),
+			$station
+		) )
 			->extend();
 	}
 
@@ -97,9 +67,9 @@ class StationAction extends AbstractAction
 	 */
 	private function readStationById( StationEntity $requestedStation ): ?StationEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new StationsRepository( $databaseConnector ) )
+		return ( new StationsRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readStationById( $requestedStation );
 	}
 }

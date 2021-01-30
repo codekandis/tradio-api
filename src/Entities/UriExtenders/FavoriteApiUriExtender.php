@@ -4,14 +4,14 @@ namespace CodeKandis\TradioApi\Entities\UriExtenders;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
-class FavoriteUriExtender extends AbstractUriExtender
+class FavoriteApiUriExtender extends AbstractApiUriExtender
 {
 	/** @var FavoriteEntity */
-	private $favorite;
+	private FavoriteEntity $favorite;
 
-	public function __construct( ApiUriBuilderInterface $uriBuilder, FavoriteEntity $favorite )
+	public function __construct( ApiUriBuilderInterface $apiUriBuilder, FavoriteEntity $favorite )
 	{
-		parent::__construct( $uriBuilder );
+		parent::__construct( $apiUriBuilder );
 		$this->favorite = $favorite;
 	}
 
@@ -23,11 +23,11 @@ class FavoriteUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->favorite->canonicalUri = $this->uriBuilder->buildFavoriteUri( $this->favorite->id );
+		$this->favorite->canonicalUri = $this->apiUriBuilder->buildFavoriteUri( $this->favorite->id );
 	}
 
 	private function addFavoriteUsersUri(): void
 	{
-		$this->favorite->usersUri = $this->uriBuilder->buildFavoriteUsersUri( $this->favorite->id );
+		$this->favorite->usersUri = $this->apiUriBuilder->buildFavoriteUsersUri( $this->favorite->id );
 	}
 }

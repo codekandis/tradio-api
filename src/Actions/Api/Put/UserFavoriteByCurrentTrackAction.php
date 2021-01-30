@@ -1,16 +1,13 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Put;
 
-use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Http\ContentTypes;
 use CodeKandis\Tiphy\Http\Requests\BadRequestException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
-use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAction;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
@@ -30,22 +27,8 @@ use ReflectionException;
 use function is_object;
 use function strtolower;
 
-class UserFavoriteByCurrentTrackAction extends AbstractAction
+class UserFavoriteByCurrentTrackAction extends AbstractWithDatabaseConnectorAction
 {
-	/** @var ConnectorInterface */
-	private $databaseConnector;
-
-	private function getDatabaseConnector(): ConnectorInterface
-	{
-		if ( null === $this->databaseConnector )
-		{
-			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
-			$this->databaseConnector = new Connector( $databaseConfig );
-		}
-
-		return $this->databaseConnector;
-	}
-
 	/**
 	 * @throws PersistenceException
 	 * @throws ReflectionException
@@ -66,7 +49,6 @@ class UserFavoriteByCurrentTrackAction extends AbstractAction
 			return;
 		}
 
-		/** @var UserEntity $requestedUser */
 		$requestedUser     = new UserEntity();
 		$requestedUser->id = $inputData[ 'userId' ];
 		$user              = $this->readUser( $requestedUser );
@@ -160,9 +142,9 @@ class UserFavoriteByCurrentTrackAction extends AbstractAction
 	 */
 	private function readStationById( StationEntity $requestedStation ): ?StationEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new StationsRepository( $databaseConnector ) )
+		return ( new StationsRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readStationById( $requestedStation );
 	}
 
@@ -171,9 +153,9 @@ class UserFavoriteByCurrentTrackAction extends AbstractAction
 	 */
 	private function readUser( UserEntity $requestedUser ): ?UserEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new UsersRepository( $databaseConnector ) )
+		return ( new UsersRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readUserById( $requestedUser );
 	}
 
@@ -182,9 +164,9 @@ class UserFavoriteByCurrentTrackAction extends AbstractAction
 	 */
 	private function writeFavoriteByUserId( FavoriteEntity $favorite, UserEntity $user ): void
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		( new FavoritesRepository( $databaseConnector ) )
+		( new FavoritesRepository(
+			$this->getDatabaseConnector()
+		) )
 			->writeFavoriteByUserId( $favorite, $user );
 	}
 }

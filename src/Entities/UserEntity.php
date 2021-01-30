@@ -6,20 +6,20 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class UserEntity extends AbstractEntity
 {
 	/** @var string */
-	public $canonicalUri = '';
+	public string $canonicalUri = '';
 
 	/** @var string */
-	public $id = '';
+	public string $id = '';
 
 	/** @var string */
-	public $name = '';
+	public string $name = '';
 
 	/** @var string */
-	public $email = '';
+	public string $email = '';
 
 	/** @var string */
-	public $stationsUri = '';
+	public string $stationsUri = '';
 
 	/** @var string */
-	public $favoritesUri = '';
+	public string $favoritesUri = '';
 }

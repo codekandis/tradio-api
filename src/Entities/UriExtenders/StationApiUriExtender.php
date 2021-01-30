@@ -4,14 +4,14 @@ namespace CodeKandis\TradioApi\Entities\UriExtenders;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
-class StationUriExtender extends AbstractUriExtender
+class StationApiUriExtender extends AbstractApiUriExtender
 {
 	/** @var StationEntity */
-	private $station;
+	private StationEntity $station;
 
-	public function __construct( ApiUriBuilderInterface $uriBuilder, StationEntity $station )
+	public function __construct( ApiUriBuilderInterface $apiUriBuilder, StationEntity $station )
 	{
-		parent::__construct( $uriBuilder );
+		parent::__construct( $apiUriBuilder );
 		$this->station = $station;
 	}
 
@@ -24,16 +24,16 @@ class StationUriExtender extends AbstractUriExtender
 
 	private function addCanonicalUri(): void
 	{
-		$this->station->canonicalUri = $this->uriBuilder->buildStationUri( $this->station->id );
+		$this->station->canonicalUri = $this->apiUriBuilder->buildStationUri( $this->station->id );
 	}
 
 	private function addCurrentTrackUri(): void
 	{
-		$this->station->currentTrackUri = $this->uriBuilder->buildCurrentTrackUri( $this->station->id );
+		$this->station->currentTrackUri = $this->apiUriBuilder->buildCurrentTrackUri( $this->station->id );
 	}
 
 	private function addStationUsersUri(): void
 	{
-		$this->station->usersUri = $this->uriBuilder->buildStationUsersUri( $this->station->id );
+		$this->station->usersUri = $this->apiUriBuilder->buildStationUsersUri( $this->station->id );
 	}
 }

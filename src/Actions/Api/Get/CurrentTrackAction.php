@@ -1,56 +1,24 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
-use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
-use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAndApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackUriExtender;
+use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackApiUriExtender;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
-use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use JsonException;
 
-class CurrentTrackAction extends AbstractAction
+class CurrentTrackAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
 {
-	/** @var ConnectorInterface */
-	private $databaseConnector;
-
-	/** @var ApiUriBuilder */
-	private $uriBuilder;
-
-	private function getDatabaseConnector(): ConnectorInterface
-	{
-		if ( null === $this->databaseConnector )
-		{
-			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
-			$this->databaseConnector = new Connector( $databaseConfig );
-		}
-
-		return $this->databaseConnector;
-	}
-
-	private function getUriBuilder(): ApiUriBuilder
-	{
-		if ( null === $this->uriBuilder )
-		{
-			$uriBuilderConfiguration = ConfigurationRegistry::_()->getUriBuilderConfiguration();
-			$this->uriBuilder        = new ApiUriBuilder( $uriBuilderConfiguration );
-		}
-
-		return $this->uriBuilder;
-	}
-
 	/**
 	 * @throws PersistenceException
 	 * @throws JsonException
@@ -96,8 +64,12 @@ class CurrentTrackAction extends AbstractAction
 
 	private function extendUris( CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite ): void
 	{
-		$uriBuilder = $this->getUriBuilder();
-		( new CurrentTrackUriExtender( $uriBuilder, $currentTrack, $station, $favorite ) )
+		( new CurrentTrackApiUriExtender(
+			$this->getApiUriBuilder(),
+			$currentTrack,
+			$station,
+			$favorite
+		) )
 			->extend();
 	}
 
@@ -106,9 +78,9 @@ class CurrentTrackAction extends AbstractAction
 	 */
 	private function readStation( StationEntity $requestedStation ): ?StationEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new StationsRepository( $databaseConnector ) )
+		return ( new StationsRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readStationById( $requestedStation );
 	}
 
@@ -127,9 +99,9 @@ class CurrentTrackAction extends AbstractAction
 	 */
 	private function readFavoriteByName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new FavoritesRepository( $databaseConnector ) )
+		return ( new FavoritesRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readFavoriteByName( $requestedFavorite );
 	}
 }
