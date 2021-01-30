@@ -6,17 +6,17 @@ use CodeKandis\Tiphy\Entities\AbstractEntity;
 class CurrentTrackEntity extends AbstractEntity
 {
 	/** @var string */
-	public $canonicalUri = '';
+	public string $canonicalUri = '';
 
 	/** @var string */
-	public $name = '';
+	public string $name = '';
 
 	/** @var string */
-	public $stationId = '';
+	public string $stationId = '';
 
 	/** @var string */
-	public $stationUri = '';
+	public string $stationUri = '';
 
-	/** @var ?string */
-	public $favoriteUri;
+	/** @var null|string */
+	public ?string $favoriteUri = null;
 }
