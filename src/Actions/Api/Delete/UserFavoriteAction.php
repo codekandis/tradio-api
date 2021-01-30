@@ -1,14 +1,11 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Delete;
 
-use CodeKandis\Tiphy\Actions\AbstractAction;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\MariaDb\Connector;
-use CodeKandis\Tiphy\Persistence\MariaDb\ConnectorInterface;
 use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAction;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
 use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
@@ -19,22 +16,8 @@ use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use JsonException;
 
-class UserFavoriteAction extends AbstractAction
+class UserFavoriteAction extends AbstractWithDatabaseConnectorAction
 {
-	/** @var ConnectorInterface */
-	private $databaseConnector;
-
-	private function getDatabaseConnector(): ConnectorInterface
-	{
-		if ( null === $this->databaseConnector )
-		{
-			$databaseConfig          = ConfigurationRegistry::_()->getPersistenceConfiguration();
-			$this->databaseConnector = new Connector( $databaseConfig );
-		}
-
-		return $this->databaseConnector;
-	}
-
 	/**
 	 * @throws PersistenceException
 	 * @throws JsonException
@@ -88,9 +71,9 @@ class UserFavoriteAction extends AbstractAction
 	 */
 	private function readUserById( UserEntity $requestedUser ): ?UserEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new UsersRepository( $databaseConnector ) )
+		return ( new UsersRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readUserById( $requestedUser );
 	}
 
@@ -99,9 +82,9 @@ class UserFavoriteAction extends AbstractAction
 	 */
 	private function readFavoriteById( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		return ( new FavoritesRepository( $databaseConnector ) )
+		return ( new FavoritesRepository(
+			$this->getDatabaseConnector()
+		) )
 			->readFavoriteById( $requestedFavorite );
 	}
 
@@ -110,9 +93,9 @@ class UserFavoriteAction extends AbstractAction
 	 */
 	private function deleteFavoriteByUserId( UserEntity $user, FavoriteEntity $favorite ): void
 	{
-		$databaseConnector = $this->getDatabaseConnector();
-
-		( new FavoritesRepository( $databaseConnector ) )
+		( new FavoritesRepository(
+			$this->getDatabaseConnector()
+		) )
 			->deleteFavoriteByUserId( $favorite, $user );
 	}
 }
