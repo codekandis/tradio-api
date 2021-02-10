@@ -1,7 +1,7 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Http\Readers;
 
-use CodeKandis\CodeMessageInterpreter\CodeMessageInterpreter;
+use CodeKandis\ConstantsClassesTranslator\ConstantsClassesTranslator;
 use CodeKandis\Tiphy\Http\Requests\Methods;
 use CodeKandis\TradioApi\Errors\CurlErrorCodes;
 use CodeKandis\TradioApi\Errors\CurlErrorMessages;
@@ -42,8 +42,8 @@ class CurrentTrackReader implements CurrentTrackReaderInterface
 		$response = curl_exec( $curlHandler );
 		if ( $curlErrorCode = curl_errno( $curlHandler ) )
 		{
-			$curlErrorMessage = ( new CodeMessageInterpreter( CurlErrorCodes::class, CurlErrorMessages::class ) )
-				->interpret( $curlErrorCode );
+			$curlErrorMessage = ( new ConstantsClassesTranslator( CurlErrorCodes::class, CurlErrorMessages::class ) )
+				->translate( $curlErrorCode );
 			throw new CurlException( $curlErrorMessage, $curlErrorCode );
 		}
 		curl_close( $curlHandler );
