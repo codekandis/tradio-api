@@ -24,6 +24,10 @@ use const LIBXML_NOERROR;
 
 class CurrentTrackReader implements CurrentTrackReaderInterface
 {
+	/**
+	 * @return string
+	 * @throws CurlException
+	 */
 	public function read( string $uri, string $xPath ): string
 	{
 		$curlHandler = curl_init();
