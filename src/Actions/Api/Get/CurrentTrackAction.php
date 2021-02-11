@@ -10,6 +10,7 @@ use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackApiUriExtender;
+use CodeKandis\TradioApi\Errors\CurlException;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
@@ -40,7 +41,19 @@ class CurrentTrackAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAc
 			return;
 		}
 
-		$currentTrack            = $this->readCurrentTrack( $station );
+		try
+		{
+			$currentTrack = $this->readCurrentTrack( $station );
+		}
+		catch ( CurlException $exception )
+		{
+			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_NOT_REACHABLE, StationsErrorMessages::STATION_NOT_REACHABLE, $inputData );
+			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
+				->respond();
+
+			return;
+		}
+
 		$requestedFavorite       = new FavoriteEntity();
 		$requestedFavorite->name = $currentTrack->name;
 		$favorite                = $this->readFavoriteByName( $requestedFavorite );
@@ -84,6 +97,11 @@ class CurrentTrackAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAc
 			->readStationById( $requestedStation );
 	}
 
+	/**
+	 * @param StationEntity $station
+	 * @return CurrentTrackEntity
+	 * @throws CurlException
+	 */
 	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
 	{
 		$currentTrack            = new CurrentTrackEntity();
