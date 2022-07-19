@@ -1,17 +1,19 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi;
 
+use CodeKandis\Persistence\Connector;
 use CodeKandis\SentryClient\SentryClient;
 use CodeKandis\Tiphy\Actions\ActionDispatcher;
-use CodeKandis\TiphySentryClientIntegration\Throwables\Handlers\InternalServerErrorThrowableHandler;
-use CodeKandis\TradioApi\Actions\Api\PreDispatchment\AuthenticationPreDispatcher;
+use CodeKandis\TiphyAuthenticationIntegration\Actions\PreDispatchment\Api\AuthorizationHeaderKeyAuthenticationPreDispatcher;
+use CodeKandis\TiphyAuthenticationIntegration\Persistence\MariaDb\Repositories\Authentication\UsersRepository;
+use CodeKandis\TiphySentryClientIntegration\Development\Throwables\Handlers\InternalServerErrorThrowableHandler;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
 use function error_reporting;
 use function ini_set;
 use const E_ALL;
 
 /**
- * Represents the bootstrap script of the project.
+ * Represents the bootstrap script of the application.
  * @package codekandis/tradio-api
  * @author  Christian Ramelow <info@codekandis.net>
  */
@@ -29,7 +31,13 @@ $sentryClient->register();
 
 $actionDispatcher = new ActionDispatcher(
 	$configurationRegistry->getRoutesConfiguration(),
-	new AuthenticationPreDispatcher(),
+	new AuthorizationHeaderKeyAuthenticationPreDispatcher(
+		new UsersRepository(
+			new Connector(
+				ConfigurationRegistry::_()->getPersistenceConfiguration()
+			)
+		)
+	),
 	new InternalServerErrorThrowableHandler( $sentryClient )
 );
 $actionDispatcher->dispatch();
