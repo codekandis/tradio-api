@@ -1,21 +1,38 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Persistence\MariaDb\Repositories;
 
-use CodeKandis\Tiphy\Persistence\MariaDb\Repositories\AbstractRepository;
-use CodeKandis\Tiphy\Persistence\PersistenceException;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UserEntity;
+use CodeKandis\Persistence\FetchingResultFailedException;
+use CodeKandis\Persistence\Repositories\AbstractRepository;
+use CodeKandis\Persistence\SettingFetchModeFailedException;
+use CodeKandis\Persistence\StatementExecutionFailedException;
+use CodeKandis\Persistence\StatementPreparationFailedException;
+use CodeKandis\TradioApi\Entities\Collections\UserEntityCollection;
+use CodeKandis\TradioApi\Entities\Collections\UserEntityCollectionInterface;
+use CodeKandis\TradioApi\Entities\EntityPropertyMappings\EntityPropertyMapperBuilder;
+use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\StationEntityInterface;
+use CodeKandis\TradioApi\Entities\UserEntityInterface;
+use ReflectionException;
 
-class UsersRepository extends AbstractRepository
+/**
+ * Represents the MariaDB repository of the user entity.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class UsersRepository extends AbstractRepository implements UsersRepositoryInterface
 {
 	/**
-	 * @return UserEntity[]
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readUsers(): array
+	public function readUsers(): UserEntityCollectionInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`users`.*
 			FROM
@@ -24,28 +41,26 @@ class UsersRepository extends AbstractRepository
 				`users`.`name` ASC;
 		END;
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var UserEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, null, UserEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
+		$userEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildUserEntityPropertyMapper();
 
-		return $resultSet;
+		return new UserEntityCollection(
+			...$this->persistenceConnector->query( $statement, null, $userEntityPropertyMapper )
+		);
 	}
 
 	/**
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readUserById( UserEntity $user ): ?UserEntity
+	public function readUserById( UserEntityInterface $user ): ?UserEntityInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`users`.*
 			FROM
@@ -56,33 +71,31 @@ class UsersRepository extends AbstractRepository
 				0, 1;
 		END;
 
+		$userEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildUserEntityPropertyMapper();
+
+		$mappedUser = $userEntityPropertyMapper->mapToArray( $user );
+
 		$arguments = [
-			'userId' => $user->id
+			'userId' => $mappedUser[ 'id' ]
 		];
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var UserEntity $result */
-			$result = $this->databaseConnector->queryFirst( $query, $arguments, UserEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $result;
+		return $this->persistenceConnector->queryFirst( $statement, $arguments, $userEntityPropertyMapper );
 	}
 
 	/**
-	 * @return UserEntity[]
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readUsersByStationId( StationEntity $station ): array
+	public function readUsersByStationId( StationEntityInterface $station ): UserEntityCollectionInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`users`.*
 			FROM
@@ -97,33 +110,35 @@ class UsersRepository extends AbstractRepository
 				`users`.`name` ASC;
 		END;
 
+		$userEntityPropertyMapper    = ( new EntityPropertyMapperBuilder() )
+			->buildUserEntityPropertyMapper();
+		$stationEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildStationEntityPropertyMapper();
+
+		$mappedStation = $stationEntityPropertyMapper->mapToArray( $station );
+
 		$arguments = [
-			'stationId' => $station->id
+			'stationId' => $mappedStation[ 'id' ]
 		];
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var UserEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, $arguments, UserEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $resultSet;
+		return new UserEntityCollection(
+			...$this->persistenceConnector->query( $statement, $arguments, $userEntityPropertyMapper )
+		);
 	}
 
 	/**
-	 * @return UserEntity[]
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
+	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readUsersByFavoriteId( FavoriteEntity $favorite ): array
+	public function readUsersByFavoriteId( FavoriteEntityInterface $favorite ): UserEntityCollectionInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`users`.*
 			FROM
@@ -138,23 +153,19 @@ class UsersRepository extends AbstractRepository
 				`users`.`name` ASC;
 		END;
 
+		$userEntityPropertyMapper     = ( new EntityPropertyMapperBuilder() )
+			->buildUserEntityPropertyMapper();
+		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteEntityPropertyMapper();
+
+		$mappedFavorite = $favoriteEntityPropertyMapper->mapToArray( $favorite );
+
 		$arguments = [
-			'favoriteId' => $favorite->id
+			'favoriteId' => $mappedFavorite[ 'id' ]
 		];
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var UserEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, $arguments, UserEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $resultSet;
+		return new UserEntityCollection(
+			...$this->persistenceConnector->query( $statement, $arguments, $userEntityPropertyMapper )
+		);
 	}
 }

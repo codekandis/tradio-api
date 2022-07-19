@@ -1,20 +1,37 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Persistence\MariaDb\Repositories;
 
-use CodeKandis\Tiphy\Persistence\MariaDb\Repositories\AbstractRepository;
-use CodeKandis\Tiphy\Persistence\PersistenceException;
-use CodeKandis\TradioApi\Entities\StationEntity;
-use CodeKandis\TradioApi\Entities\UserEntity;
+use CodeKandis\Persistence\FetchingResultFailedException;
+use CodeKandis\Persistence\Repositories\AbstractRepository;
+use CodeKandis\Persistence\SettingFetchModeFailedException;
+use CodeKandis\Persistence\StatementExecutionFailedException;
+use CodeKandis\Persistence\StatementPreparationFailedException;
+use CodeKandis\TradioApi\Entities\Collections\StationEntityCollection;
+use CodeKandis\TradioApi\Entities\Collections\StationEntityCollectionInterface;
+use CodeKandis\TradioApi\Entities\EntityPropertyMappings\EntityPropertyMapperBuilder;
+use CodeKandis\TradioApi\Entities\StationEntityInterface;
+use CodeKandis\TradioApi\Entities\UserEntityInterface;
+use ReflectionException;
 
-class StationsRepository extends AbstractRepository
+/**
+ * Represents the MariaDB repository of the station entity.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class StationsRepository extends AbstractRepository implements StationsRepositoryInterface
 {
 	/**
-	 * @return StationEntity[]
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readStations(): array
+	public function readStations(): StationEntityCollectionInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`stations`.*
 			FROM
@@ -23,28 +40,26 @@ class StationsRepository extends AbstractRepository
 				`stations`.`name` ASC;
 		END;
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var StationEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, null, StationEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
+		$stationEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildStationEntityPropertyMapper();
 
-		return $resultSet;
+		return new StationEntityCollection(
+			...$this->persistenceConnector->query( $statement, null, $stationEntityPropertyMapper )
+		);
 	}
 
 	/**
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readStationById( StationEntity $station ): ?StationEntity
+	public function readStationById( StationEntityInterface $station ): ?StationEntityInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`stations`.*
 			FROM
@@ -55,33 +70,31 @@ class StationsRepository extends AbstractRepository
 				0, 1;
 		END;
 
+		$stationEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildStationEntityPropertyMapper();
+
+		$mappedStation = $stationEntityPropertyMapper->mapToArray( $station );
+
 		$arguments = [
-			'stationId' => $station->id
+			'stationId' => $mappedStation[ 'id' ]
 		];
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var StationEntity $result */
-			$result = $this->databaseConnector->queryFirst( $query, $arguments, StationEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $result;
+		return $this->persistenceConnector->queryFirst( $statement, $arguments, $stationEntityPropertyMapper );
 	}
 
 	/**
-	 * @return StationEntity[]
-	 * @throws PersistenceException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readStationsByUserId( UserEntity $user ): array
+	public function readStationsByUserId( UserEntityInterface $user ): StationEntityCollectionInterface
 	{
-		$query = <<< END
+		$statement = <<< END
 			SELECT
 				`stations`.*
 			FROM
@@ -96,23 +109,19 @@ class StationsRepository extends AbstractRepository
 				`stations`.`name` ASC;
 		END;
 
+		$stationEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildStationEntityPropertyMapper();
+		$userEntityPropertyMapper    = ( new EntityPropertyMapperBuilder() )
+			->buildUserEntityPropertyMapper();
+
+		$mappedUser = $userEntityPropertyMapper->mapToArray( $user );
+
 		$arguments = [
-			'userId' => $user->id
+			'userId' => $mappedUser[ 'id' ]
 		];
 
-		try
-		{
-			$this->databaseConnector->beginTransaction();
-			/** @var StationEntity[] $resultSet */
-			$resultSet = $this->databaseConnector->query( $query, $arguments, StationEntity::class );
-			$this->databaseConnector->commit();
-		}
-		catch ( PersistenceException $exception )
-		{
-			$this->databaseConnector->rollback();
-			throw $exception;
-		}
-
-		return $resultSet;
+		return new StationEntityCollection(
+			...$this->persistenceConnector->query( $statement, $arguments, $stationEntityPropertyMapper )
+		);
 	}
 }
