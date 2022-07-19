@@ -27,10 +27,15 @@
 	},
 	"require": {
 		"php": "^7.4",
-		"codekandis/tiphy": "^0",
+		"codekandis/authentication": "^0",
+		"codekandis/configurations": "^0",
+		"codekandis/entities": "^0",
+		"codekandis/persistence": "^0",
 		"codekandis/sentry-client": "^1",
-		"codekandis/tiphy-sentry-client-integration": "^0",
-		"codekandis/authentication": "^0"
+		"codekandis/tiphy": "^0",
+		"codekandis/tiphy-authentication-integration": "^0",
+		"codekandis/tiphy-persistence-integration": "^0",
+		"codekandis/tiphy-sentry-client-integration": "^0"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-master",
