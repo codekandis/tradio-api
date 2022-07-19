@@ -1,47 +1,62 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Configurations;
 
-use CodeKandis\TiphySentryClientIntegration\Configurations\AbstractConfigurationRegistry;
+use CodeKandis\Configurations\PlainConfigurationLoader;
+use CodeKandis\Tiphy\Configurations\AbstractConfigurationRegistry;
+use CodeKandis\Tiphy\Configurations\RoutesConfiguration;
+use CodeKandis\Tiphy\Configurations\UriBuilderConfiguration;
+use CodeKandis\TiphyPersistenceIntegration\Configurations\ConfigurationRegistryTrait as PersistenceConfigurationRegistryTrait;
+use CodeKandis\TiphyPersistenceIntegration\Configurations\PersistenceConfiguration;
+use CodeKandis\TiphySentryClientIntegration\Configurations\ConfigurationRegistryTrait as SentryClientConfigurationRegistryTrait;
+use CodeKandis\TiphySentryClientIntegration\Configurations\SentryClientConfiguration;
 use function dirname;
 
-class ConfigurationRegistry extends AbstractConfigurationRegistry
+/**
+ * Represents the application's configuration registry.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class ConfigurationRegistry extends AbstractConfigurationRegistry implements ConfigurationRegistryInterface
 {
+	use PersistenceConfigurationRegistryTrait;
+	use SentryClientConfigurationRegistryTrait;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public static function _(): ConfigurationRegistryInterface
+	{
+		return parent::_();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function initialize(): void
 	{
-		$this->initializeSentryClientConfiguration();
-		$this->initializeRoutesConfiguration();
-		$this->initializePersistenceConfiguration();
-		$this->initializeUriBuilderConfiguration();
-	}
-
-	private function initializeSentryClientConfiguration()
-	{
-		$this->setPlainSentryClientConfiguration(
-			( require __DIR__ . '/Plain/sentryClient.php' )
-			+ ( require dirname( __DIR__, 2 ) . '/config/sentryClient.php' )
+		$this->persistenceConfiguration  = new PersistenceConfiguration(
+			( new PlainConfigurationLoader() )
+				->load( __DIR__ . '/Plain', 'persistence' )
+				->load( dirname( __DIR__, 2 ) . '/config', 'persistence' )
+				->getPlainConfiguration()
 		);
-	}
-
-	private function initializeRoutesConfiguration()
-	{
-		$this->setPlainRoutesConfiguration(
-			( require __DIR__ . '/Plain/routes.php' )
-			+ ( require dirname( __DIR__, 2 ) . '/config/routes.php' )
+		$this->routesConfiguration       = new RoutesConfiguration(
+			( new PlainConfigurationLoader() )
+				->load( __DIR__ . '/Plain', 'routes' )
+				->load( dirname( __DIR__, 2 ) . '/config', 'routes' )
+				->getPlainConfiguration()
 		);
-	}
-
-	private function initializePersistenceConfiguration()
-	{
-		$this->setPlainPersistenceConfiguration(
-			require dirname( __DIR__, 2 ) . '/config/persistence.php'
+		$this->sentryClientConfiguration = new SentryClientConfiguration(
+			( new PlainConfigurationLoader() )
+				->load( __DIR__ . '/Plain', 'sentryClient' )
+				->load( dirname( __DIR__, 2 ) . '/config', 'sentryClient' )
+				->getPlainConfiguration()
 		);
-	}
-
-	private function initializeUriBuilderConfiguration()
-	{
-		$this->setPlainUriBuilderConfiguration(
-			( require __DIR__ . '/Plain/uriBuilder.php' )
-			+ ( require dirname( __DIR__, 2 ) . '/config/uriBuilder.php' )
+		$this->uriBuilderConfiguration   = new UriBuilderConfiguration(
+			( new PlainConfigurationLoader() )
+				->load( __DIR__ . '/Plain', 'uriBuilder' )
+				->load( dirname( __DIR__, 2 ) . '/config', 'uriBuilder' )
+				->getPlainConfiguration()
 		);
 	}
 }

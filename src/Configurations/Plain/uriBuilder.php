@@ -1,7 +1,10 @@
 <?php declare( strict_types = 1 );
-namespace CodeKandis\ClassListApi\Configurations;
+namespace CodeKandis\TradioApi\Configurations;
 
 return [
+	'schema'       => 'https',
+	'host'         => 'api.tradio.codekandis',
+	'baseUri'      => '/',
 	'relativeUris' => [
 		'index'         => '',
 		'stations'      => 'stations',
