@@ -1,34 +1,164 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Entities;
 
-use CodeKandis\Tiphy\Entities\AbstractEntity;
-
-class StationEntity extends AbstractEntity
+/**
+ * Represents a station.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class StationEntity extends AbstractPersistableEntity implements StationEntityInterface
 {
-	/** @var string */
-	public string $canonicalUri = '';
-
-	/** @var string */
-	public string $id = '';
-
-	/** @var string */
+	/**
+	 * Stores the server Type of the station.
+	 * @var string
+	 */
 	public string $serverType = '';
 
-	/** @var string */
+	/**
+	 * Stores the name of the station.
+	 * @var string
+	 */
 	public string $name = '';
 
-	/** @var string */
+	/**
+	 * Stores the stream URI of the station.
+	 * @var string
+	 */
 	public string $streamUri = '';
 
-	/** @var string */
+	/**
+	 * Stores the tracklist URI of the station.
+	 * @var string
+	 */
 	public string $tracklistUri = '';
 
-	/** @var string */
+	/**
+	 * Stores the XPath to fetch the currently playing track.
+	 * @var string
+	 */
 	public string $currentTrackXPath = '';
 
-	/** @var string */
+	/**
+	 * Stores the URI of the currently playing track.
+	 * @var string
+	 */
 	public string $currentTrackUri = '';
 
-	/** @var string */
+	/**
+	 * Stores the URI of the users who favored the station.
+	 * @var string
+	 */
 	public string $usersUri = '';
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getServerType(): string
+	{
+		return $this->serverType;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setServerType( string $serverType ): void
+	{
+		$this->serverType = $serverType;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName(): string
+	{
+		return $this->name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setName( string $name ): void
+	{
+		$this->name = $name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getStreamUri(): string
+	{
+		return $this->streamUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setStreamUri( string $streamUri ): void
+	{
+		$this->streamUri = $streamUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getTracklistUri(): string
+	{
+		return $this->tracklistUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setTracklistUri( string $tracklistUri ): void
+	{
+		$this->tracklistUri = $tracklistUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getCurrentTrackXPath(): string
+	{
+		return $this->currentTrackXPath;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setCurrentTrackXPath( string $currentTrackXPath ): void
+	{
+		$this->currentTrackXPath = $currentTrackXPath;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getCurrentTrackUri(): string
+	{
+		return $this->currentTrackUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setCurrentTrackUri( string $currentTrackUri ): void
+	{
+		$this->currentTrackUri = $currentTrackUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getUsersUri(): string
+	{
+		return $this->usersUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setUsersUri( string $usersUri ): void
+	{
+		$this->usersUri = $usersUri;
+	}
 }

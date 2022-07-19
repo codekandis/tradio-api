@@ -1,25 +1,98 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Entities;
 
-use CodeKandis\Tiphy\Entities\AbstractEntity;
-
-class UserEntity extends AbstractEntity
+/**
+ * Represents a user.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class UserEntity extends AbstractPersistableEntity implements UserEntityInterface
 {
-	/** @var string */
-	public string $canonicalUri = '';
-
-	/** @var string */
-	public string $id = '';
-
-	/** @var string */
+	/**
+	 * Stores the name of the user.
+	 * @var string
+	 */
 	public string $name = '';
 
-	/** @var string */
-	public string $email = '';
+	/**
+	 * Stores the e-mail of the user.
+	 * @var string
+	 */
+	public string $eMail = '';
 
-	/** @var string */
+	/**
+	 * Stores the URI of the user's favorite stations.
+	 * @var string
+	 */
 	public string $stationsUri = '';
 
-	/** @var string */
+	/**
+	 * Stores the URI of the user's favorites.
+	 * @var string
+	 */
 	public string $favoritesUri = '';
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName(): string
+	{
+		return $this->name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setName( string $name ): void
+	{
+		$this->name = $name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getEMail(): string
+	{
+		return $this->eMail;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setEMail( string $eMail ): void
+	{
+		$this->eMail = $eMail;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getStationsUri(): string
+	{
+		return $this->stationsUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setStationsUri( string $stationsUri ): void
+	{
+		$this->stationsUri = $stationsUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getFavoritesUri(): string
+	{
+		return $this->favoritesUri;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setFavoritesUri( string $favoritesUri ): void
+	{
+		$this->favoritesUri = $favoritesUri;
+	}
 }
