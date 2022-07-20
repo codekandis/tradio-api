@@ -1,36 +1,59 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
+use CodeKandis\Persistence\FetchingResultFailedException;
+use CodeKandis\Persistence\SettingFetchModeFailedException;
+use CodeKandis\Persistence\StatementExecutionFailedException;
+use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Entities\UriExtenders\StationApiUriExtender;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use JsonException;
+use ReflectionException;
 
-class StationAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
+/**
+ * Represents the action to retrieve a specific station.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class StationAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
 {
 	/**
-	 * @throws PersistenceException
-	 * @throws JsonException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
+	 * @throws JsonException An error occurred during the creation of the JSON response.
 	 */
 	public function execute(): void
 	{
 		$inputData = $this->getInputData();
 
-		$requestedStation     = new StationEntity();
-		$requestedStation->id = $inputData[ 'stationId' ];
-		$station              = $this->readStationById( $requestedStation );
+		$station = $this->readStationById(
+			StationEntity::fromArray(
+				[
+					'id' => $inputData[ 'stationId' ]
+				]
+			)
+		);
 
 		if ( null === $station )
 		{
-			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
-			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
+			( new JsonResponder(
+				StatusCodes::NOT_FOUND,
+				null,
+				new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData )
+			) )
 				->respond();
 
 			return;
@@ -38,22 +61,29 @@ class StationAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
 
 		$this->extendUris( $station );
 
-		$responderData = [
-			'station' => $station
-		];
-		( new JsonResponder( StatusCodes::OK, $responderData ) )
+		( new JsonResponder(
+			StatusCodes::OK,
+			[
+				'station' => $station
+			]
+		) )
 			->respond();
 	}
 
 	/**
-	 * @return string[]
+	 * Gets the input data of the request.
+	 * @return string[] The input data of the request.
 	 */
 	private function getInputData(): array
 	{
 		return $this->arguments;
 	}
 
-	private function extendUris( StationEntity $station ): void
+	/**
+	 * Extends the URIs of a station.
+	 * @param StationEntityInterface $station The station to extend its URIs.
+	 */
+	private function extendUris( StationEntityInterface $station ): void
 	{
 		( new StationApiUriExtender(
 			$this->getApiUriBuilder(),
@@ -63,13 +93,21 @@ class StationAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
 	}
 
 	/**
-	 * @throws PersistenceException
+	 * Reads a station by its ID.
+	 * @param StationEntityInterface $station The station with the ID to search for.
+	 * @return ?StationEntityInterface The station if found, otherwise null.
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readStationById( StationEntity $requestedStation ): ?StationEntity
+	private function readStationById( StationEntityInterface $station ): ?StationEntityInterface
 	{
 		return ( new StationsRepository(
-			$this->getDatabaseConnector()
+			$this->getPersistenceConnector()
 		) )
-			->readStationById( $requestedStation );
+			->readStationById( $station );
 	}
 }
