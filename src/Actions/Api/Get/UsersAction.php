@@ -1,37 +1,55 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
+use CodeKandis\Persistence\FetchingResultFailedException;
+use CodeKandis\Persistence\SettingFetchModeFailedException;
+use CodeKandis\Persistence\StatementExecutionFailedException;
+use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\PersistenceException;
-use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Entities\Collections\UserEntityCollectionInterface;
 use CodeKandis\TradioApi\Entities\UriExtenders\UserApiUriExtender;
-use CodeKandis\TradioApi\Entities\UserEntity;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use JsonException;
+use ReflectionException;
 
-class UsersAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
+/**
+ * Represents the action to retrieve all users.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class UsersAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
 {
 	/**
-	 * @throws PersistenceException
-	 * @throws JsonException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
+	 * @throws JsonException An error occurred during the creation of the JSON response.
 	 */
 	public function execute(): void
 	{
 		$users = $this->readUsers();
 		$this->extendUris( $users );
 
-		$responderData = [
-			'users' => $users,
-		];
-		$responder     = new JsonResponder( StatusCodes::OK, $responderData );
-		$responder->respond();
+		( new JsonResponder(
+			StatusCodes::OK,
+			[
+				'users' => $users,
+			]
+		) )
+			->respond();
 	}
 
 	/**
-	 * @param UserEntity[] $users
+	 * Extends the URIs of a list of users.
+	 * @param UserEntityCollectionInterface $users The users to extend their URIs.
 	 */
-	private function extendUris( array $users ): void
+	private function extendUris( UserEntityCollectionInterface $users ): void
 	{
 		$apiUriBuilder = $this->getApiUriBuilder();
 		foreach ( $users as $user )
@@ -42,13 +60,19 @@ class UsersAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
 	}
 
 	/**
-	 * @return UserEntity[]
-	 * @throws PersistenceException
+	 * Reads all users.
+	 * @return UserEntityCollectionInterface The users.
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readUsers(): array
+	private function readUsers(): UserEntityCollectionInterface
 	{
 		return ( new UsersRepository(
-			$this->getDatabaseConnector()
+			$this->getPersistenceConnector()
 		) )
 			->readUsers();
 	}
