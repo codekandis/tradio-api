@@ -22,11 +22,16 @@ use const CURLOPT_URL;
 use const CURLOPT_USERAGENT;
 use const LIBXML_NOERROR;
 
+/**
+ * Represents a current track reader.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
 class CurrentTrackReader implements CurrentTrackReaderInterface
 {
 	/**
-	 * @return string
-	 * @throws CurlException
+	 * {@inheritDoc}
+	 * @throws CurlException An error occured during a CURL operation.
 	 */
 	public function read( string $uri, string $xPath ): string
 	{
