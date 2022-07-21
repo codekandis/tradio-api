@@ -3,7 +3,7 @@ namespace CodeKandis\TradioApi\Api\Actions\Get;
 
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\TradioApi\Api\Actions\AbstractWithApiUriBuilderAction;
+use CodeKandis\TradioApi\Api\Actions\AbstractAction;
 use CodeKandis\TradioApi\Environment\Entities\IndexEntity;
 use CodeKandis\TradioApi\Environment\Entities\IndexEntityInterface;
 use CodeKandis\TradioApi\Environment\Entities\UriExtenders\IndexApiUriExtender;
@@ -14,7 +14,7 @@ use JsonException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class IndexAction extends AbstractWithApiUriBuilderAction
+class IndexAction extends AbstractAction
 {
 	/**
 	 * {@inheritDoc}

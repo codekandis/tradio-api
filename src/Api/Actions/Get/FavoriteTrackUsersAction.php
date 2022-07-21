@@ -8,7 +8,7 @@ use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Api\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Api\Actions\AbstractAction;
 use CodeKandis\TradioApi\Environment\Entities\Collections\UserEntityCollectionInterface;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\FavoriteTracksErrorCodes;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\FavoriteTracksErrorMessages;
@@ -25,7 +25,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoriteTrackUsersAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
+class FavoriteTrackUsersAction extends AbstractAction
 {
 	/**
 	 * {@inheritDoc}

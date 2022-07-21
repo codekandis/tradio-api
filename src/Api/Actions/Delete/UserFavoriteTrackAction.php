@@ -12,7 +12,7 @@ use CodeKandis\Persistence\TransactionStartFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Api\Actions\AbstractWithPersistenceConnectorAction;
+use CodeKandis\TradioApi\Api\Actions\AbstractAction;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\FavoriteTracksErrorCodes;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\FavoriteTracksErrorMessages;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\UsersErrorCodes;
@@ -31,7 +31,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class UserFavoriteTrackAction extends AbstractWithPersistenceConnectorAction
+class UserFavoriteTrackAction extends AbstractAction
 {
 	/**
 	 * {@inheritDoc}

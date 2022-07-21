@@ -7,7 +7,7 @@ use CodeKandis\Persistence\StatementExecutionFailedException;
 use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\TradioApi\Api\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Api\Actions\AbstractAction;
 use CodeKandis\TradioApi\Environment\Entities\Collections\UserEntityCollectionInterface;
 use CodeKandis\TradioApi\Environment\Entities\UriExtenders\UserApiUriExtender;
 use CodeKandis\TradioApi\Environment\Persistence\MariaDb\Repositories\UsersRepository;
@@ -19,7 +19,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class UsersAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
+class UsersAction extends AbstractAction
 {
 	/**
 	 * {@inheritDoc}

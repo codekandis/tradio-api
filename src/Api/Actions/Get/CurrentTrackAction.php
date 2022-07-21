@@ -8,9 +8,11 @@ use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Api\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Api\Actions\AbstractAction;
 use CodeKandis\TradioApi\Environment\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Environment\Entities\CurrentTrackEntityInterface;
+use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\CurrentTracksErrorCodes;
+use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\CurrentTracksErrorMessages;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Environment\Entities\FavoriteTrackEntity;
@@ -20,8 +22,9 @@ use CodeKandis\TradioApi\Environment\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Environment\Entities\UriExtenders\CurrentTrackApiUriExtender;
 use CodeKandis\TradioApi\Environment\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use CodeKandis\TradioApi\Environment\Persistence\MariaDb\Repositories\StationsRepository;
-use CodeKandis\TradioApi\Environment\Readers\CurlException;
-use CodeKandis\TradioApi\Environment\Readers\CurrentTrackReader;
+use CodeKandis\TradioApi\Environment\Readers\CurrentTrackNameNotExtractableException;
+use CodeKandis\TradioApi\Environment\Readers\CurrentTrackNameReader;
+use CodeKandis\TradioApi\Environment\Readers\TracklistNotReadableException;
 use JsonException;
 use ReflectionException;
 
@@ -30,7 +33,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
+class CurrentTrackAction extends AbstractAction
 {
 	/**
 	 * {@inheritDoc}
@@ -73,12 +76,15 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 		{
 			$currentTrack = $this->readCurrentTrack( $station );
 		}
-		catch ( CurlException $exception )
+		catch ( TracklistNotReadableException|CurrentTrackNameNotExtractableException $exception )
 		{
+			$this->getSentryClient()
+				 ->captureThrowable( $exception );
+
 			( new JsonResponder(
 				StatusCodes::SERVICE_UNAVAILABLE,
 				null,
-				new ErrorInformation( StationsErrorCodes::STATION_NOT_REACHABLE, StationsErrorMessages::STATION_NOT_REACHABLE, $inputData )
+				new ErrorInformation( CurrentTracksErrorCodes::CURRENT_TRACK_NOT_READABLE, CurrentTracksErrorMessages::CURRENT_TRACK_NOT_READABLE, $inputData )
 			) )
 				->respond();
 
@@ -152,7 +158,8 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 	 * Gets the currently playing track of a specific station.
 	 * @param StationEntityInterface $station The station to read the currently playing track from.
 	 * @return CurrentTrackEntityInterface The currently playing track.
-	 * @throws CurlException An error occured during a CURL operation.
+	 * @throws TracklistNotReadableException The tracklist is not readable.
+	 * @throws CurrentTrackNameNotExtractableException The currently playing track name is not extractable.
 	 * @throws ReflectionException An error occurred during the creation of the current track entity.
 	 */
 	private function readCurrentTrack( StationEntityInterface $station ): CurrentTrackEntityInterface
@@ -160,7 +167,7 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 		return CurrentTrackEntity::fromArray(
 			[
 				'stationId' => $station->getId(),
-				'name'      => ( new CurrentTrackReader() )
+				'name'      => ( new CurrentTrackNameReader() )
 					->read(
 						$station->getTracklistUri(),
 						$station->getCurrentTrackXPath()

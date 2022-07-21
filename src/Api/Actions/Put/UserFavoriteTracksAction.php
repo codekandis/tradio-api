@@ -11,7 +11,7 @@ use CodeKandis\Tiphy\Http\Requests\BadRequestException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Api\Actions\AbstractWithPersistenceConnectorAction;
+use CodeKandis\TradioApi\Api\Actions\AbstractAction;
 use CodeKandis\TradioApi\Environment\Entities\Collections\FavoriteTrackEntityCollection;
 use CodeKandis\TradioApi\Environment\Entities\Collections\FavoriteTrackEntityCollectionInterface;
 use CodeKandis\TradioApi\Environment\Entities\Enumerations\Errors\CommonErrorCodes;
@@ -30,7 +30,7 @@ use function array_map;
 use function is_object;
 use function strtolower;
 
-class UserFavoriteTracksAction extends AbstractWithPersistenceConnectorAction
+class UserFavoriteTracksAction extends AbstractAction
 {
 	/**
 	 * {@inheritDoc}
