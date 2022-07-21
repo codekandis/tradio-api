@@ -1,14 +1,20 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Actions\Api\Get;
 
+use CodeKandis\Persistence\FetchingResultFailedException;
+use CodeKandis\Persistence\SettingFetchModeFailedException;
+use CodeKandis\Persistence\StatementExecutionFailedException;
+use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
-use CodeKandis\Tiphy\Persistence\PersistenceException;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
-use CodeKandis\TradioApi\Actions\AbstractWithDatabaseConnectorAndApiUriBuilderAction;
+use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
+use CodeKandis\TradioApi\Entities\CurrentTrackEntityInterface;
 use CodeKandis\TradioApi\Entities\FavoriteEntity;
+use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
 use CodeKandis\TradioApi\Entities\StationEntity;
+use CodeKandis\TradioApi\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackApiUriExtender;
 use CodeKandis\TradioApi\Errors\CurlException;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
@@ -17,25 +23,48 @@ use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use JsonException;
+use ReflectionException;
 
-class CurrentTrackAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAction
+/**
+ * Represents the action to retrieve the currently playing track of a specific station.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
+class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
 {
 	/**
-	 * @throws PersistenceException
-	 * @throws JsonException
+	 * {@inheritDoc}
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws ReflectionException An error occurred during the creation of the current track entity.
+	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
+	 * @throws CurlException An error occured during a CURL operation.
+	 * @throws JsonException An error occurred during the creation of the JSON response.
 	 */
 	public function execute(): void
 	{
 		$inputData = $this->getInputData();
 
-		$requestedStation     = new StationEntity();
-		$requestedStation->id = $inputData[ 'stationId' ];
-		$station              = $this->readStation( $requestedStation );
+		$station = $this->readStation(
+			StationEntity::fromArray(
+				[
+					'id' => $inputData[ 'stationId' ]
+				]
+			)
+		);
 
 		if ( null === $station )
 		{
-			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData );
-			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
+			( new JsonResponder(
+				StatusCodes::NOT_FOUND,
+				null,
+				new ErrorInformation( StationsErrorCodes::STATION_UNKNOWN, StationsErrorMessages::STATION_UNKNOWN, $inputData )
+			) )
 				->respond();
 
 			return;
@@ -47,35 +76,50 @@ class CurrentTrackAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAc
 		}
 		catch ( CurlException $exception )
 		{
-			$errorInformation = new ErrorInformation( StationsErrorCodes::STATION_NOT_REACHABLE, StationsErrorMessages::STATION_NOT_REACHABLE, $inputData );
-			( new JsonResponder( StatusCodes::NOT_FOUND, null, $errorInformation ) )
+			( new JsonResponder(
+				StatusCodes::NOT_FOUND,
+				null,
+				new ErrorInformation( StationsErrorCodes::STATION_NOT_REACHABLE, StationsErrorMessages::STATION_NOT_REACHABLE, $inputData )
+			) )
 				->respond();
 
 			return;
 		}
 
-		$requestedFavorite       = new FavoriteEntity();
-		$requestedFavorite->name = $currentTrack->name;
-		$favorite                = $this->readFavoriteByName( $requestedFavorite );
+		$favorite = $this->readFavoriteByName(
+			FavoriteEntity::fromArray(
+				[
+					'name' => $currentTrack->getName()
+				]
+			)
+		);
 		$this->extendUris( $currentTrack, $station, $favorite );
 
-		$responderData = [
-			'currentTrack' => $currentTrack
-		];
-
-		( new JsonResponder( StatusCodes::OK, $responderData ) )
+		( new JsonResponder(
+			StatusCodes::OK,
+			[
+				'currentTrack' => $currentTrack
+			]
+		) )
 			->respond();
 	}
 
 	/**
-	 * @return string[]
+	 * Gets the input data of the request.
+	 * @return string[] The input data of the request.
 	 */
 	private function getInputData(): array
 	{
 		return $this->arguments;
 	}
 
-	private function extendUris( CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite ): void
+	/**
+	 * Extends the URIs of a currently playing track.
+	 * @param CurrentTrackEntityInterface $currentTrack The currently playing track to extend its URIs.
+	 * @param StationEntityInterface $station The station currently playing the track.
+	 * @param ?FavoriteEntityInterface $favorite The favorite track whom the currently playing track is related with.
+	 */
+	private function extendUris( CurrentTrackEntityInterface $currentTrack, StationEntityInterface $station, ?FavoriteEntityInterface $favorite ): void
 	{
 		( new CurrentTrackApiUriExtender(
 			$this->getApiUriBuilder(),
@@ -87,39 +131,61 @@ class CurrentTrackAction extends AbstractWithDatabaseConnectorAndApiUriBuilderAc
 	}
 
 	/**
-	 * @throws PersistenceException
+	 * Reads a station by its ID.
+	 * @param StationEntityInterface $station The station with the ID to search for.
+	 * @return ?StationEntityInterface The station if found, otherwise null.
+	 * @throws ReflectionException The station entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the station entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readStation( StationEntity $requestedStation ): ?StationEntity
+	private function readStation( StationEntityInterface $station ): ?StationEntityInterface
 	{
 		return ( new StationsRepository(
-			$this->getDatabaseConnector()
+			$this->getPersistenceConnector()
 		) )
-			->readStationById( $requestedStation );
+			->readStationById( $station );
 	}
 
 	/**
-	 * @param StationEntity $station
-	 * @return CurrentTrackEntity
-	 * @throws CurlException
+	 * Gets the currently playing track of a specific station.
+	 * @param StationEntityInterface $station The station to read the currently playing track from.
+	 * @return CurrentTrackEntityInterface The currently playing track.
+	 * @throws CurlException An error occured during a CURL operation.
+	 * @throws ReflectionException An error occurred during the creation of the current track entity.
 	 */
-	private function readCurrentTrack( StationEntity $station ): CurrentTrackEntity
+	private function readCurrentTrack( StationEntityInterface $station ): CurrentTrackEntityInterface
 	{
-		$currentTrack            = new CurrentTrackEntity();
-		$currentTrack->name      = ( new CurrentTrackReader() )
-			->read( $station->tracklistUri, $station->currentTrackXPath );
-		$currentTrack->stationId = $station->id;
-
-		return $currentTrack;
+		return CurrentTrackEntity::fromArray(
+			[
+				'stationId' => $station->getId(),
+				'name'      => ( new CurrentTrackReader() )
+					->read(
+						$station->getTracklistUri(),
+						$station->getCurrentTrackXPath()
+					)
+			]
+		);
 	}
 
 	/**
-	 * @throws PersistenceException
+	 * Reads a favorite track by its name.
+	 * @param FavoriteEntityInterface $favorite The favorite track with the name to search for.
+	 * @return ?FavoriteEntityInterface The favorite track if found, otherwise null.
+	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readFavoriteByName( FavoriteEntity $requestedFavorite ): ?FavoriteEntity
+	private function readFavoriteByName( FavoriteEntityInterface $favorite ): ?FavoriteEntityInterface
 	{
 		return ( new FavoritesRepository(
-			$this->getDatabaseConnector()
+			$this->getPersistenceConnector()
 		) )
-			->readFavoriteByName( $requestedFavorite );
+			->readFavoriteByName( $favorite );
 	}
 }
