@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b95177a7b3d403b8b92ce5391267f645",
+    "content-hash": "70ac690817b490d504132e1cfb3e120f",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -303,6 +303,72 @@
                 "source": "https://github.com/codekandis/converters/tree/master"
             },
             "time": "2022-04-29T09:47:24+00:00"
+        },
+        {
+            "name": "codekandis/curly-brace",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codekandis/curly-brace.git",
+                "reference": "5e751026485ad121061feacacfdea866aee9eca7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codekandis/curly-brace/zipball/5e751026485ad121061feacacfdea866aee9eca7",
+                "reference": "5e751026485ad121061feacacfdea866aee9eca7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": "^7.4"
+            },
+            "require-dev": {
+                "codekandis/phpunit": "^3",
+                "roave/security-advisories": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CodeKandis\\CurlyBrace\\": [
+                        "src"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Ramelow",
+                    "email": "info@codekandis.net",
+                    "homepage": "https://codekandis.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "`codekandis/curly-brace` is a library providing cURL wrapper interfaces and classes to handle requests and responses.",
+            "keywords": [
+                "brace",
+                "classes",
+                "cookies",
+                "curl",
+                "curly",
+                "curly brace",
+                "headers",
+                "interfaces",
+                "php",
+                "post fields",
+                "request",
+                "responses",
+                "wrapper"
+            ],
+            "support": {
+                "docs": "https://github.com/codekandis/curly-brace/blob/master/README.md",
+                "email": "info@codekandis.net",
+                "issues": "https://github.com/codekandis/curly-brace/issues",
+                "source": "https://github.com/codekandis/curly-brace/tree/master"
+            },
+            "time": "2022-06-02T13:07:34+00:00"
         },
         {
             "name": "codekandis/entities",

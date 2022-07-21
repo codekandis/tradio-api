@@ -30,6 +30,7 @@
 		"codekandis/authentication": "^0",
 		"codekandis/configurations": "^0",
 		"codekandis/entities": "^0",
+		"codekandis/curly-brace": "^0",
 		"codekandis/persistence": "^0",
 		"codekandis/sentry-client": "^1",
 		"codekandis/tiphy": "^0",
