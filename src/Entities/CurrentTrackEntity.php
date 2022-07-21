@@ -30,7 +30,7 @@ class CurrentTrackEntity extends AbstractEntity implements CurrentTrackEntityInt
 	 * Stores the URI of the persisted favored track of the currently playing track.
 	 * @var ?string
 	 */
-	public ?string $favoriteUri = null;
+	public ?string $favoriteTrackUri = null;
 
 	/**
 	 * {@inheritDoc}
@@ -83,16 +83,16 @@ class CurrentTrackEntity extends AbstractEntity implements CurrentTrackEntityInt
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getFavoriteUri(): ?string
+	public function getFavoriteTrackUri(): ?string
 	{
-		return $this->favoriteUri;
+		return $this->favoriteTrackUri;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setFavoriteUri( ?string $favoriteUri ): void
+	public function setFavoriteTrackUri( ?string $favoriteTrackUri ): void
 	{
-		$this->favoriteUri = $favoriteUri;
+		$this->favoriteTrackUri = $favoriteTrackUri;
 	}
 }

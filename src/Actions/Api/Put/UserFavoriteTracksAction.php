@@ -12,16 +12,16 @@ use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
 use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAction;
-use CodeKandis\TradioApi\Entities\Collections\FavoriteEntityCollection;
-use CodeKandis\TradioApi\Entities\Collections\FavoriteEntityCollectionInterface;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
+use CodeKandis\TradioApi\Entities\Collections\FavoriteTrackEntityCollection;
+use CodeKandis\TradioApi\Entities\Collections\FavoriteTrackEntityCollectionInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
 use CodeKandis\TradioApi\Entities\UserEntityInterface;
 use CodeKandis\TradioApi\Errors\CommonErrorCodes;
 use CodeKandis\TradioApi\Errors\CommonErrorMessages;
 use CodeKandis\TradioApi\Errors\UsersErrorCodes;
 use CodeKandis\TradioApi\Errors\UsersErrorMessages;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use JsonException;
 use ReflectionException;
@@ -30,7 +30,7 @@ use function array_map;
 use function is_object;
 use function strtolower;
 
-class UserFavoritesAction extends AbstractWithPersistenceConnectorAction
+class UserFavoriteTracksAction extends AbstractWithPersistenceConnectorAction
 {
 	/**
 	 * {@inheritDoc}
@@ -86,14 +86,14 @@ class UserFavoritesAction extends AbstractWithPersistenceConnectorAction
 			return;
 		}
 
-		$this->createFavoritesByUserId(
-			new FavoriteEntityCollection(
+		$this->createFavoriteTracksByUserId(
+			new FavoriteTrackEntityCollection(
 				...array_map(
-					function ( stdClass $favorite )
+					function ( stdClass $favoriteTrack )
 					{
-						return FavoriteEntity::fromObject( $favorite );
+						return FavoriteTrackEntity::fromObject( $favoriteTrack );
 					},
-					$inputData[ 'favorites' ]
+					$inputData[ 'favoriteTracks' ]
 				)
 			),
 			$user
@@ -126,7 +126,7 @@ class UserFavoritesAction extends AbstractWithPersistenceConnectorAction
 
 		$bodyData     = [];
 		$requiredKeys = [
-			'favorites'
+			'favoriteTracks'
 		];
 
 		$isValid = true;
@@ -169,9 +169,9 @@ class UserFavoritesAction extends AbstractWithPersistenceConnectorAction
 	}
 
 	/**
-	 * Creates a favorite track for a specific user.
-	 * @param FavoriteEntityCollectionInterface $favorites The favorite tracks to create.
-	 * @param UserEntityInterface $user The user with the ID whom the favorite track is related with.
+	 * Creates favored tracks of a specific user.
+	 * @param FavoriteTrackEntityCollectionInterface $favoriteTracks The favored tracks to create.
+	 * @param UserEntityInterface $user The user with the ID whom the favored track is related with.
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
 	 * @throws ReflectionException The user entity class to reflect does not exist.
@@ -179,18 +179,18 @@ class UserFavoritesAction extends AbstractWithPersistenceConnectorAction
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 */
-	private function createFavoritesByUserId( FavoriteEntityCollectionInterface $favorites, UserEntityInterface $user ): void
+	private function createFavoriteTracksByUserId( FavoriteTrackEntityCollectionInterface $favoriteTracks, UserEntityInterface $user ): void
 	{
 		$this->getPersistenceConnector()
 			 ->asTransaction(
-				 function () use ( $favorites, $user )
+				 function () use ( $favoriteTracks, $user )
 				 {
-					 $favoriteRepository = new FavoritesRepository(
+					 $favoriteTrackRepository = new FavoriteTracksRepository(
 						 $this->getPersistenceConnector()
 					 );
-					 foreach ( $favorites as $favorite )
+					 foreach ( $favoriteTracks as $favoriteTrack )
 					 {
-						 $favoriteRepository->createFavoriteByUserId( $favorite, $user );
+						 $favoriteTrackRepository->createFavoriteTrackByUserId( $favoriteTrack, $user );
 					 }
 				 }
 			 );

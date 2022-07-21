@@ -36,7 +36,7 @@ class UserApiUriExtender extends AbstractApiUriExtender
 	{
 		$this->addCanonicalUri();
 		$this->addUserStationsUri();
-		$this->addUserFavoritesUri();
+		$this->addUserFavoriteTracksUri();
 	}
 
 	/**
@@ -58,8 +58,8 @@ class UserApiUriExtender extends AbstractApiUriExtender
 	/**
 	 * Adds the URI of the tracks favored by the user.
 	 */
-	private function addUserFavoritesUri(): void
+	private function addUserFavoriteTracksUri(): void
 	{
-		$this->user->favoritesUri = $this->apiUriBuilder->buildUserFavoritesUri( $this->user->id );
+		$this->user->favoriteTracksUri = $this->apiUriBuilder->buildUserFavoriteTracksUri( $this->user->id );
 	}
 }

@@ -33,26 +33,26 @@ interface UserEntityInterface extends PersistableEntityInterface
 	public function setEMail( string $eMail ): void;
 
 	/**
-	 * Gets the URI of the stations of the user.
-	 * @return string The URI of the stations of the user.
+	 * Gets the URI of the favored stations of the user.
+	 * @return string The URI of the favored stations of the user.
 	 */
 	public function getStationsUri(): string;
 
 	/**
-	 * Sets the URI of the stations of the user.
-	 * @param string $stationsUri The URI of the stations of the user.
+	 * Sets the URI of the favored stations of the user.
+	 * @param string $stationsUri The URI of the favored stations of the user.
 	 */
 	public function setStationsUri( string $stationsUri ): void;
 
 	/**
-	 * Gets the URI of the favorites of the user.
-	 * @return string The URI of the favorites of the user.
+	 * Gets the URI of the favored tracks of the user.
+	 * @return string The URI of the favored tracks of the user.
 	 */
-	public function getFavoritesUri(): string;
+	public function getFavoriteTracksUri(): string;
 
 	/**
-	 * Sets the URI of the favorites of the user.
-	 * @param string $favoritesUri The URI of the favorites of the user.
+	 * Sets the URI of the favored tracks of the user.
+	 * @param string $favoriteTracksUri The URI of the favored tracks of the user.
 	 */
-	public function setFavoritesUri( string $favoritesUri ): void;
+	public function setFavoriteTracksUri( string $favoriteTracksUri ): void;
 }

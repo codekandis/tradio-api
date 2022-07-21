@@ -2,7 +2,7 @@
 namespace CodeKandis\TradioApi\Entities\UriExtenders;
 
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Http\UriBuilders\ApiUriBuilderInterface;
 
@@ -26,25 +26,25 @@ class CurrentTrackApiUriExtender extends AbstractApiUriExtender
 	private StationEntity $station;
 
 	/**
-	 * Stores the favorite representing the currently playing track.
-	 * @var ?FavoriteEntity
+	 * Stores the favored track representing the currently playing track.
+	 * @var ?FavoriteTrackEntity
 	 */
-	private ?FavoriteEntity $favorite;
+	private ?FavoriteTrackEntity $favoriteTrack;
 
 	/**
 	 * Constructor method.
 	 * @param ApiUriBuilderInterface $apiUriBuilder The API uri builder the URI extension depends on.
 	 * @param CurrentTrackEntity $currentTrack The currently playing track to extend its URIs.
 	 * @param StationEntity $station The station currently playing the track.
-	 * @param null|FavoriteEntity $favorite The favorite representing the currently playing track.
+	 * @param null|FavoriteTrackEntity $favoriteTrack The favored track representing the currently playing track.
 	 */
-	public function __construct( ApiUriBuilderInterface $apiUriBuilder, CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteEntity $favorite )
+	public function __construct( ApiUriBuilderInterface $apiUriBuilder, CurrentTrackEntity $currentTrack, StationEntity $station, ?FavoriteTrackEntity $favoriteTrack )
 	{
 		parent::__construct( $apiUriBuilder );
 
 		$this->currentTrack = $currentTrack;
 		$this->station      = $station;
-		$this->favorite     = $favorite;
+		$this->favoriteTrack     = $favoriteTrack;
 	}
 
 	/**
@@ -54,7 +54,7 @@ class CurrentTrackApiUriExtender extends AbstractApiUriExtender
 	{
 		$this->addCanonicalUri();
 		$this->addStationUri();
-		$this->addFavoriteUri();
+		$this->addFavoriteTrackUri();
 	}
 
 	/**
@@ -74,12 +74,12 @@ class CurrentTrackApiUriExtender extends AbstractApiUriExtender
 	}
 
 	/**
-	 * Adds the URI of the favorite representing the currently playing track.
+	 * Adds the URI of the favored track representing the currently playing track.
 	 */
-	private function addFavoriteUri(): void
+	private function addFavoriteTrackUri(): void
 	{
-		$this->currentTrack->favoriteUri = null === $this->favorite
+		$this->currentTrack->favoriteTrackUri = null === $this->favoriteTrack
 			? null
-			: $this->apiUriBuilder->buildFavoriteUri( $this->favorite->id );
+			: $this->apiUriBuilder->buildFavoriteTrackUri( $this->favoriteTrack->id );
 	}
 }

@@ -7,10 +7,10 @@ use CodeKandis\Persistence\Repositories\AbstractRepository;
 use CodeKandis\Persistence\SettingFetchModeFailedException;
 use CodeKandis\Persistence\StatementExecutionFailedException;
 use CodeKandis\Persistence\StatementPreparationFailedException;
-use CodeKandis\TradioApi\Entities\Collections\FavoriteEntityCollection;
-use CodeKandis\TradioApi\Entities\Collections\FavoriteEntityCollectionInterface;
+use CodeKandis\TradioApi\Entities\Collections\FavoriteTrackEntityCollection;
+use CodeKandis\TradioApi\Entities\Collections\FavoriteTrackEntityCollectionInterface;
 use CodeKandis\TradioApi\Entities\EntityPropertyMappings\EntityPropertyMapperBuilder;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
 use CodeKandis\TradioApi\Entities\UserEntityInterface;
 use ReflectionException;
 
@@ -19,7 +19,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoritesRepository extends AbstractRepository implements FavoritesRepositoryInterface
+class FavoriteTracksRepository extends AbstractRepository implements FavoriteTracksRepositoryInterface
 {
 	/**
 	 * {@inheritDoc}
@@ -30,22 +30,22 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readFavorites(): FavoriteEntityCollectionInterface
+	public function readFavoriteTracks(): FavoriteTrackEntityCollectionInterface
 	{
 		$statement = <<< END
 			SELECT
-				`favorites`.*
+				`favoriteTracks`.*
 			FROM
-				`favorites`
+				`favoriteTracks`
 			ORDER BY
-				`favorites`.timestampCreated DESC;
+				`favoriteTracks`.timestampCreated DESC;
 		END;
 
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
 
-		return new FavoriteEntityCollection(
-			...$this->persistenceConnector->query( $statement, null, $favoriteEntityPropertyMapper )
+		return new FavoriteTrackEntityCollection(
+			...$this->persistenceConnector->query( $statement, null, $favoriteTrackEntityPropertyMapper )
 		);
 	}
 
@@ -58,29 +58,29 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readFavoriteById( FavoriteEntityInterface $favorite ): ?FavoriteEntityInterface
+	public function readFavoriteTrackById( FavoriteTrackEntityInterface $favoriteTrack ): ?FavoriteTrackEntityInterface
 	{
 		$statement = <<< END
 			SELECT
-				`favorites`.*
+				`favoriteTracks`.*
 			FROM
-				`favorites`
+				`favoriteTracks`
 			WHERE
-				`favorites`.`id` = :favoriteId
+				`favoriteTracks`.`id` = :favoriteTrackId
 			LIMIT
 				0, 1;
 		END;
 
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
 
-		$mappedFavorite = $favoriteEntityPropertyMapper->mapToArray( $favorite );
+		$mappedFavoriteTrack = $favoriteTrackEntityPropertyMapper->mapToArray( $favoriteTrack );
 
 		$arguments = [
-			'favoriteId' => $mappedFavorite[ 'id' ]
+			'favoriteTrackId' => $mappedFavoriteTrack[ 'id' ]
 		];
 
-		return $this->persistenceConnector->queryFirst( $statement, $arguments, $favoriteEntityPropertyMapper );
+		return $this->persistenceConnector->queryFirst( $statement, $arguments, $favoriteTrackEntityPropertyMapper );
 	}
 
 	/**
@@ -92,29 +92,29 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readFavoriteByName( FavoriteEntityInterface $favorite ): ?FavoriteEntityInterface
+	public function readFavoriteTrackByName( FavoriteTrackEntityInterface $favoriteTrack ): ?FavoriteTrackEntityInterface
 	{
 		$statement = <<< END
 			SELECT
-				`favorites`.*
+				`favoriteTracks`.*
 			FROM
-				`favorites`
+				`favoriteTracks`
 			WHERE
-				`favorites`.`name` = :name
+				`favoriteTracks`.`name` = :name
 			LIMIT
 				0, 1;
 		END;
 
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
 
-		$mappedFavorite = $favoriteEntityPropertyMapper->mapToArray( $favorite );
+		$mappedFavoriteTrack = $favoriteTrackEntityPropertyMapper->mapToArray( $favoriteTrack );
 
 		$arguments = [
-			'name' => $mappedFavorite[ 'name' ]
+			'name' => $mappedFavoriteTrack[ 'name' ]
 		];
 
-		return $this->persistenceConnector->queryFirst( $statement, $arguments, $favoriteEntityPropertyMapper );
+		return $this->persistenceConnector->queryFirst( $statement, $arguments, $favoriteTrackEntityPropertyMapper );
 	}
 
 	/**
@@ -127,26 +127,26 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readFavoritesByUserId( UserEntityInterface $user ): FavoriteEntityCollectionInterface
+	public function readFavoriteTracksByUserId( UserEntityInterface $user ): FavoriteTrackEntityCollectionInterface
 	{
 		$statement = <<< END
 			SELECT
-				`favorites`.*
+				`favoriteTracks`.*
 			FROM
-				`favorites`
+				`favoriteTracks`
 			INNER JOIN
-				`users_favorites`
+				`users_favoriteTracks`
 				ON
-				`users_favorites`.`userId` = :userId
+				`users_favoriteTracks`.`userId` = :userId
 			WHERE
-				`favorites`.`id` = `users_favorites`.`favoriteId`
+				`favoriteTracks`.`id` = `users_favoriteTracks`.`favoriteTrackId`
 			ORDER BY
-				`favorites`.timestampCreated DESC;
+				`favoriteTracks`.timestampCreated DESC;
 		END;
 
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
-		$userEntityPropertyMapper     = ( new EntityPropertyMapperBuilder() )
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
+		$userEntityPropertyMapper          = ( new EntityPropertyMapperBuilder() )
 			->buildUserEntityPropertyMapper();
 
 		$mappedUser = $userEntityPropertyMapper->mapToArray( $user );
@@ -155,8 +155,8 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 			'userId' => $mappedUser[ 'id' ]
 		];
 
-		return new FavoriteEntityCollection(
-			...$this->persistenceConnector->query( $statement, $arguments, $favoriteEntityPropertyMapper )
+		return new FavoriteTrackEntityCollection(
+			...$this->persistenceConnector->query( $statement, $arguments, $favoriteTrackEntityPropertyMapper )
 		);
 	}
 
@@ -169,50 +169,50 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 */
-	public function createFavoriteByUserId( FavoriteEntityInterface $favorite, UserEntityInterface $user ): void
+	public function createFavoriteTrackByUserId( FavoriteTrackEntityInterface $favoriteTrack, UserEntityInterface $user ): void
 	{
 		$statements = [
 			<<< END
 				INSERT INTO
-					`favorites`
+					`favoriteTracks`
 					( `id`, `name`, timestampCreated )
 				VALUES
-					( UUID( ), LOWER( :favoriteName ), :timestampCreated )
+					( UUID( ), LOWER( :favoriteTrackName ), :timestampCreated )
 				ON DUPLICATE KEY UPDATE
 					timestampCreated = IF ( timestampCreated IS NULL OR timestampCreated > :timestampCreated, :timestampCreated, timestampCreated );
 			END,
 			<<< END
 				INSERT IGNORE INTO
-					`users_favorites`
-					( `id`, `userId`, `favoriteId`)
+					`users_favoriteTracks`
+					( `id`, `userId`, `favoriteTrackId`)
 				SELECT
 					UUID( ),
 					:userId,
-					`favorites`.`id`
+					`favoriteTracks`.`id`
 				FROM
-					`favorites`
+					`favoriteTracks`
 				WHERE
-					`favorites`.`name` = :favoriteName;
+					`favoriteTracks`.`name` = :favoriteTrackName;
 			END
 		];
 
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
-		$userEntityPropertyMapper     = ( new EntityPropertyMapperBuilder() )
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
+		$userEntityPropertyMapper          = ( new EntityPropertyMapperBuilder() )
 			->buildUserEntityPropertyMapper();
 
-		$mappedFavorite = $favoriteEntityPropertyMapper->mapToArray( $favorite );
-		$mappedUser     = $userEntityPropertyMapper->mapToArray( $user );
+		$mappedFavoriteTrack = $favoriteTrackEntityPropertyMapper->mapToArray( $favoriteTrack );
+		$mappedUser          = $userEntityPropertyMapper->mapToArray( $user );
 
 		$arguments = [
 			[
-				'userId'           => $mappedUser[ 'id' ],
-				'favoriteName'     => $mappedFavorite[ 'name' ],
-				'timestampCreated' => $mappedFavorite[ 'timestampCreated' ]
+				'userId'            => $mappedUser[ 'id' ],
+				'favoriteTrackName' => $mappedFavoriteTrack[ 'name' ],
+				'timestampCreated'  => $mappedFavoriteTrack[ 'timestampCreated' ]
 			],
 			[
-				'userId'       => $mappedUser[ 'id' ],
-				'favoriteName' => $mappedFavorite[ 'name' ]
+				'userId'            => $mappedUser[ 'id' ],
+				'favoriteTrackName' => $mappedFavoriteTrack[ 'name' ]
 			]
 		];
 
@@ -228,44 +228,44 @@ class FavoritesRepository extends AbstractRepository implements FavoritesReposit
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 */
-	public function deleteFavoriteByUserId( FavoriteEntityInterface $favorite, UserEntityInterface $user ): void
+	public function deleteFavoriteTrackByUserId( FavoriteTrackEntityInterface $favoriteTrack, UserEntityInterface $user ): void
 	{
 		$statements = [
 			<<< END
 				DELETE
 				FROM
-					`users_favorites`
+					`users_favoriteTracks`
 				WHERE
-					`users_favorites`.`userId` = :userId
+					`users_favoriteTracks`.`userId` = :userId
 					AND
-					`users_favorites`.`favoriteId` = :favoriteId;
+					`users_favoriteTracks`.`favoriteTrackId` = :favoriteTrackId;
 			END,
 			<<< END
 				DELETE
-					`favorites`
+					`favoriteTracks`
 				FROM
-					`favorites`
+					`favoriteTracks`
 				LEFT JOIN
-					`users_favorites`
+					`users_favoriteTracks`
 				ON
-					`users_favorites`.`favoriteId` = `favorites`.`id`
+					`users_favoriteTracks`.`favoriteTrackId` = `favoriteTracks`.`id`
 				WHERE
-					`users_favorites`.`id` IS NULL;
+					`users_favoriteTracks`.`id` IS NULL;
 			END
 		];
 
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
-		$userEntityPropertyMapper     = ( new EntityPropertyMapperBuilder() )
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
+		$userEntityPropertyMapper          = ( new EntityPropertyMapperBuilder() )
 			->buildUserEntityPropertyMapper();
 
-		$mappedFavorite = $favoriteEntityPropertyMapper->mapToArray( $favorite );
-		$mappedUser     = $userEntityPropertyMapper->mapToArray( $user );
+		$mappedFavoriteTrack = $favoriteTrackEntityPropertyMapper->mapToArray( $favoriteTrack );
+		$mappedUser          = $userEntityPropertyMapper->mapToArray( $user );
 
 		$arguments = [
 			[
-				'userId'     => $mappedUser[ 'id' ],
-				'favoriteId' => $mappedFavorite[ 'id' ]
+				'userId'          => $mappedUser[ 'id' ],
+				'favoriteTrackId' => $mappedFavoriteTrack[ 'id' ]
 			],
 			[]
 		];

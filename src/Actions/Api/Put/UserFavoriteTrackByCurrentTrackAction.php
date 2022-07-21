@@ -14,8 +14,8 @@ use CodeKandis\Tiphy\Throwables\ErrorInformation;
 use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAction;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntityInterface;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntity;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Entities\UserEntity;
@@ -28,7 +28,7 @@ use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Errors\UsersErrorCodes;
 use CodeKandis\TradioApi\Errors\UsersErrorMessages;
 use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use JsonException;
@@ -36,7 +36,7 @@ use ReflectionException;
 use function is_object;
 use function strtolower;
 
-class UserFavoriteByCurrentTrackAction extends AbstractWithPersistenceConnectorAction
+class UserFavoriteTrackByCurrentTrackAction extends AbstractWithPersistenceConnectorAction
 {
 	/**
 	 * {@inheritDoc}
@@ -116,8 +116,8 @@ class UserFavoriteByCurrentTrackAction extends AbstractWithPersistenceConnectorA
 			return;
 		}
 
-		$this->writeFavoriteByUserId(
-			FavoriteEntity::fromArray(
+		$this->writeFavoriteTrackByUserId(
+			FavoriteTrackEntity::fromArray(
 				[
 					'name' => $currentTrack->getName()
 				]
@@ -235,9 +235,9 @@ class UserFavoriteByCurrentTrackAction extends AbstractWithPersistenceConnectorA
 	}
 
 	/**
-	 * Creates a favorite track for a specific user.
-	 * @param FavoriteEntityInterface $favorite The favorite track to create.
-	 * @param UserEntityInterface $user The user with the ID whom the favorite track is related with.
+	 * Creates a favored track of a specific user.
+	 * @param FavoriteTrackEntityInterface $favoriteTrack The favored track to create.
+	 * @param UserEntityInterface $user The user with the ID whom the favored track is related with.
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
 	 * @throws ReflectionException The user entity class to reflect does not exist.
@@ -245,11 +245,11 @@ class UserFavoriteByCurrentTrackAction extends AbstractWithPersistenceConnectorA
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 */
-	private function writeFavoriteByUserId( FavoriteEntityInterface $favorite, UserEntityInterface $user ): void
+	private function writeFavoriteTrackByUserId( FavoriteTrackEntityInterface $favoriteTrack, UserEntityInterface $user ): void
 	{
-		( new FavoritesRepository(
+		( new FavoriteTracksRepository(
 			$this->getPersistenceConnector()
 		) )
-			->createFavoriteByUserId( $favorite, $user );
+			->createFavoriteTrackByUserId( $favoriteTrack, $user );
 	}
 }

@@ -9,7 +9,7 @@ use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\TradioApi\Entities\Collections\UserEntityCollection;
 use CodeKandis\TradioApi\Entities\Collections\UserEntityCollectionInterface;
 use CodeKandis\TradioApi\Entities\EntityPropertyMappings\EntityPropertyMapperBuilder;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
 use CodeKandis\TradioApi\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Entities\UserEntityInterface;
 use ReflectionException;
@@ -130,13 +130,13 @@ class UsersRepository extends AbstractRepository implements UsersRepositoryInter
 	 * {@inheritDoc}
 	 * @throws ReflectionException The user entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the user entity.
-	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
+	 * @throws ReflectionException The favored track entity class to reflect does not exist.
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	public function readUsersByFavoriteId( FavoriteEntityInterface $favorite ): UserEntityCollectionInterface
+	public function readUsersByFavoriteTrackId( FavoriteTrackEntityInterface $favoriteTrack ): UserEntityCollectionInterface
 	{
 		$statement = <<< END
 			SELECT
@@ -144,24 +144,24 @@ class UsersRepository extends AbstractRepository implements UsersRepositoryInter
 			FROM
 				`users`
 			INNER JOIN
-				`users_favorites`
+				`users_favoriteTracks`
 				ON
-				`users_favorites`.`favoriteId` = :favoriteId
+				`users_favoriteTracks`.`favoriteTrackId` = :favoriteTrackId
 			WHERE
-				`users`.`id` = `users_favorites`.`userId`
+				`users`.`id` = `users_favoriteTracks`.`userId`
 			ORDER BY
 				`users`.`name` ASC;
 		END;
 
-		$userEntityPropertyMapper     = ( new EntityPropertyMapperBuilder() )
+		$userEntityPropertyMapper          = ( new EntityPropertyMapperBuilder() )
 			->buildUserEntityPropertyMapper();
-		$favoriteEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
-			->buildFavoriteEntityPropertyMapper();
+		$favoriteTrackEntityPropertyMapper = ( new EntityPropertyMapperBuilder() )
+			->buildFavoriteTrackEntityPropertyMapper();
 
-		$mappedFavorite = $favoriteEntityPropertyMapper->mapToArray( $favorite );
+		$mappedFavoriteTrack = $favoriteTrackEntityPropertyMapper->mapToArray( $favoriteTrack );
 
 		$arguments = [
-			'favoriteId' => $mappedFavorite[ 'id' ]
+			'favoriteTrackId' => $mappedFavoriteTrack[ 'id' ]
 		];
 
 		return new UserEntityCollection(

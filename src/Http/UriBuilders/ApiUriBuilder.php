@@ -77,32 +77,32 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function buildUserFavoritesUri( string $userId ): string
+	public function buildUserFavoriteTracksUri( string $userId ): string
 	{
-		return $this->build( 'userFavorites', $userId );
+		return $this->build( 'userFavoriteTracks', $userId );
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function buildFavoritesUri(): string
+	public function buildFavoriteTracksUri(): string
 	{
-		return $this->build( 'favorites' );
+		return $this->build( 'favoriteTracks' );
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function buildFavoriteUri( string $favoriteId ): string
+	public function buildFavoriteTrackUri( string $favoriteTrackId ): string
 	{
-		return $this->build( 'favorite', $favoriteId );
+		return $this->build( 'favoriteTrack', $favoriteTrackId );
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function buildFavoriteUsersUri( string $favoriteId ): string
+	public function buildFavoriteTrackUsersUri( string $favoriteTrackId ): string
 	{
-		return $this->build( 'favoriteUsers', $favoriteId );
+		return $this->build( 'favoriteTrackUsers', $favoriteTrackId );
 	}
 }

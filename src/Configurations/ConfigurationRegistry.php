@@ -12,7 +12,7 @@ use CodeKandis\TiphySentryClientIntegration\Configurations\SentryClientConfigura
 use function dirname;
 
 /**
- * Represents the application's configuration registry.
+ * Represents the configuration registry of the application.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */

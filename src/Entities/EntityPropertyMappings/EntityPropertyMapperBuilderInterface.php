@@ -26,7 +26,7 @@ interface EntityPropertyMapperBuilderInterface
 	 * Builds the entity property mapper of the favorite track entity.
 	 * @return EntityPropertyMapperInterface The entity property mapper of the favorite track entity.
 	 */
-	public function buildFavoriteEntityPropertyMapper(): EntityPropertyMapperInterface;
+	public function buildFavoriteTrackEntityPropertyMapper(): EntityPropertyMapperInterface;
 
 	/**
 	 * Builds the entity property mapper of the user entity.

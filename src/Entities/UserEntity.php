@@ -21,16 +21,16 @@ class UserEntity extends AbstractPersistableEntity implements UserEntityInterfac
 	public string $eMail = '';
 
 	/**
-	 * Stores the URI of the user's favorite stations.
+	 * Stores the URI of the favored stations of the user.
 	 * @var string
 	 */
 	public string $stationsUri = '';
 
 	/**
-	 * Stores the URI of the user's favorites.
+	 * Stores the URI of the favored tracks of the user.
 	 * @var string
 	 */
-	public string $favoritesUri = '';
+	public string $favoriteTracksUri = '';
 
 	/**
 	 * {@inheritDoc}
@@ -83,16 +83,16 @@ class UserEntity extends AbstractPersistableEntity implements UserEntityInterfac
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getFavoritesUri(): string
+	public function getFavoriteTracksUri(): string
 	{
-		return $this->favoritesUri;
+		return $this->favoriteTracksUri;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setFavoritesUri( string $favoritesUri ): void
+	public function setFavoriteTracksUri( string $favoriteTracksUri ): void
 	{
-		$this->favoritesUri = $favoritesUri;
+		$this->favoriteTracksUri = $favoriteTracksUri;
 	}
 }

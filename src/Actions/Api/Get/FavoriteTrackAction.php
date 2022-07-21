@@ -9,12 +9,12 @@ use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
 use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
-use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteApiUriExtender;
-use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
-use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntity;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteTrackApiUriExtender;
+use CodeKandis\TradioApi\Errors\FavoriteTracksErrorCodes;
+use CodeKandis\TradioApi\Errors\FavoriteTracksErrorMessages;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use JsonException;
 use ReflectionException;
 
@@ -23,7 +23,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoriteAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
+class FavoriteTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
 {
 	/**
 	 * {@inheritDoc}
@@ -39,32 +39,32 @@ class FavoriteAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAct
 	{
 		$inputData = $this->getInputData();
 
-		$favorite = $this->readFavoriteById(
-			FavoriteEntity::fromArray(
+		$favoriteTrack = $this->readFavoriteTrackById(
+			FavoriteTrackEntity::fromArray(
 				[
-					'id' => $inputData[ 'favoriteId' ]
+					'id' => $inputData[ 'favoriteTrackId' ]
 				]
 			)
 		);
 
-		if ( null === $favorite )
+		if ( null === $favoriteTrack )
 		{
 			( new JsonResponder(
 				StatusCodes::NOT_FOUND,
 				null,
-				new ErrorInformation( FavoritesErrorCodes::FAVORITE_UNKNOWN, FavoritesErrorMessages::FAVORITE_UNKNOWN, $inputData )
+				new ErrorInformation( FavoriteTracksErrorCodes::FAVORITE_TRACK_UNKNOWN, FavoriteTracksErrorMessages::FAVORITE_TRACK_UNKNOWN, $inputData )
 			) )
 				->respond();
 
 			return;
 		}
 
-		$this->extendUris( $favorite );
+		$this->extendUris( $favoriteTrack );
 
 		( new JsonResponder(
 			StatusCodes::OK,
 			[
-				'favorite' => $favorite
+				'favoriteTrack' => $favoriteTrack
 			]
 		) )
 			->respond();
@@ -80,22 +80,22 @@ class FavoriteAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAct
 	}
 
 	/**
-	 * Extends the URIs of a favorite track.
-	 * @param FavoriteEntityInterface $favorite The favorite track to extend its URIs.
+	 * Extends the URIs of a favored track.
+	 * @param FavoriteTrackEntityInterface $favoriteTrack The favored track to extend its URIs.
 	 */
-	private function extendUris( FavoriteEntityInterface $favorite ): void
+	private function extendUris( FavoriteTrackEntityInterface $favoriteTrack ): void
 	{
-		( new FavoriteApiUriExtender(
+		( new FavoriteTrackApiUriExtender(
 			$this->getApiUriBuilder(),
-			$favorite
+			$favoriteTrack
 		) )
 			->extend();
 	}
 
 	/**
 	 * Reads a favored track by its ID.
-	 * @param FavoriteEntityInterface $favorite The favored track with the ID to search for.
-	 * @return ?FavoriteEntityInterface The favored track if found, otherwise null.
+	 * @param FavoriteTrackEntityInterface $favoriteTrack The favored track with the ID to search for.
+	 * @return ?FavoriteTrackEntityInterface The favored track if found, otherwise null.
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
@@ -103,11 +103,11 @@ class FavoriteAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAct
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readFavoriteById( FavoriteEntityInterface $favorite ): ?FavoriteEntity
+	private function readFavoriteTrackById( FavoriteTrackEntityInterface $favoriteTrack ): ?FavoriteTrackEntity
 	{
-		return ( new FavoritesRepository(
+		return ( new FavoriteTracksRepository(
 			$this->getPersistenceConnector()
 		) )
-			->readFavoriteById( $favorite );
+			->readFavoriteTrackById( $favoriteTrack );
 	}
 }

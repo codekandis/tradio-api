@@ -9,30 +9,30 @@ use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\Tiphy\Throwables\ErrorInformation;
 use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
-use CodeKandis\TradioApi\Entities\Collections\UserEntityCollectionInterface;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
-use CodeKandis\TradioApi\Entities\UriExtenders\UserApiUriExtender;
-use CodeKandis\TradioApi\Errors\FavoritesErrorCodes;
-use CodeKandis\TradioApi\Errors\FavoritesErrorMessages;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Entities\Collections\FavoriteTrackEntityCollectionInterface;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteTrackApiUriExtender;
+use CodeKandis\TradioApi\Entities\UserEntity;
+use CodeKandis\TradioApi\Entities\UserEntityInterface;
+use CodeKandis\TradioApi\Errors\UsersErrorCodes;
+use CodeKandis\TradioApi\Errors\UsersErrorMessages;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\UsersRepository;
 use JsonException;
 use ReflectionException;
 
 /**
- * Represents the action to retrieve a favored tracks' users.
+ * Represents the action to retrieve a specific favored track of a specific user.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoriteUsersAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
+class UserFavoriteTracksAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
 {
 	/**
 	 * {@inheritDoc}
-	 * @throws ReflectionException The user entity class to reflect does not exist.
-	 * @throws ReflectionException An error occurred during the creation of the user entity.
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the user entity.
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
@@ -43,33 +43,33 @@ class FavoriteUsersAction extends AbstractWithPersistenceConnectorAndApiUriBuild
 	{
 		$inputData = $this->getInputData();
 
-		$favorite = $this->readFavoriteById(
-			FavoriteEntity::fromArray(
+		$user = $this->readUserById(
+			UserEntity::fromArray(
 				[
-					'id' => $inputData[ 'favoriteId' ]
+					'id' => $inputData[ 'userId' ]
 				]
 			)
 		);
 
-		if ( null === $favorite )
+		if ( null === $user )
 		{
 			( new JsonResponder(
 				StatusCodes::NOT_FOUND,
 				null,
-				new ErrorInformation( FavoritesErrorCodes::FAVORITE_UNKNOWN, FavoritesErrorMessages::FAVORITE_UNKNOWN, $inputData )
+				new ErrorInformation( UsersErrorCodes::USER_UNKNOWN, UsersErrorMessages::USER_UNKNOWN, $inputData )
 			) )
 				->respond();
 
 			return;
 		}
 
-		$users = $this->readUsersByFavoriteId( $favorite );
-		$this->extendUris( $users );
+		$favoriteTracks = $this->readFavoriteTracksByUserId( $user );
+		$this->extendUris( $favoriteTracks );
 
 		( new JsonResponder(
 			StatusCodes::OK,
 			[
-				'users' => $users,
+				'favoriteTracks' => $favoriteTracks,
 			]
 		) )
 			->respond();
@@ -85,55 +85,55 @@ class FavoriteUsersAction extends AbstractWithPersistenceConnectorAndApiUriBuild
 	}
 
 	/**
-	 * Extends the URIs of a list of users.
-	 * @param UserEntityCollectionInterface $users The users to extend their URIs.
+	 * Extends the URIs of a list of favored tracks.
+	 * @param FavoriteTrackEntityCollectionInterface $favoriteTracks The favored tracks to extend their URIs.
 	 */
-	private function extendUris( UserEntityCollectionInterface $users ): void
+	private function extendUris( FavoriteTrackEntityCollectionInterface $favoriteTracks ): void
 	{
 		$apiUriBuilder = $this->getApiUriBuilder();
-		foreach ( $users as $user )
+		foreach ( $favoriteTracks as $favoriteTrack )
 		{
-			( new UserApiUriExtender( $apiUriBuilder, $user ) )
+			( new FavoriteTrackApiUriExtender( $apiUriBuilder, $favoriteTrack ) )
 				->extend();
 		}
 	}
 
 	/**
-	 * Reads a favored track by its ID.
-	 * @param FavoriteEntityInterface $favorite The favored track with the ID to search for.
-	 * @return ?FavoriteEntityInterface The favored track if found, otherwise null.
-	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
-	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
-	 * @throws StatementPreparationFailedException The preparation of the statement failed.
-	 * @throws StatementExecutionFailedException The execution of the statement failed.
-	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
-	 * @throws FetchingResultFailedException The fetching of the statment result failed.
-	 */
-	private function readFavoriteById( FavoriteEntityInterface $favorite ): ?FavoriteEntityInterface
-	{
-		return ( new FavoritesRepository(
-			$this->getPersistenceConnector()
-		) )
-			->readFavoriteById( $favorite );
-	}
-
-	/**
-	 * Reads all users by a specific favorite track ID.
-	 * @param FavoriteEntityInterface $favorite The favored track with the ID to search for.
-	 * @return UserEntityCollectionInterface The users.
+	 * Reads a user by its ID.
+	 * @param UserEntityInterface $user The user with the ID to search for.
+	 * @return ?UserEntityInterface The user if found, otherwise null.
 	 * @throws ReflectionException The user entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the user entity.
-	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readUsersByFavoriteId( FavoriteEntityInterface $favorite ): UserEntityCollectionInterface
+	private function readUserById( UserEntityInterface $user ): ?UserEntityInterface
 	{
 		return ( new UsersRepository(
 			$this->getPersistenceConnector()
 		) )
-			->readUsersByFavoriteId( $favorite );
+			->readUserById( $user );
+	}
+
+	/**
+	 * Reads all favored tracks by a specific user ID.
+	 * @param UserEntityInterface $user The user with the ID to search for.
+	 * @return FavoriteTrackEntityCollectionInterface The favored tracks.
+	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
+	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
+	 * @throws ReflectionException The user entity class to reflect does not exist.
+	 * @throws StatementPreparationFailedException The preparation of the statement failed.
+	 * @throws StatementExecutionFailedException The execution of the statement failed.
+	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
+	 * @throws FetchingResultFailedException The fetching of the statment result failed.
+	 */
+	private function readFavoriteTracksByUserId( UserEntityInterface $user ): FavoriteTrackEntityCollectionInterface
+	{
+		return ( new FavoriteTracksRepository(
+			$this->getPersistenceConnector()
+		) )
+			->readFavoriteTracksByUserId( $user );
 	}
 }

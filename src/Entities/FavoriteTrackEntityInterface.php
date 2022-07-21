@@ -4,21 +4,21 @@ namespace CodeKandis\TradioApi\Entities;
 use DateTimeImmutable;
 
 /**
- * Represents the interface of any favorite track.
+ * Represents the interface of any favored track.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-interface FavoriteEntityInterface extends PersistableEntityInterface
+interface FavoriteTrackEntityInterface extends PersistableEntityInterface
 {
 	/**
-	 * Gets the name of the favorite track.
-	 * @return string The name of the favorite track.
+	 * Gets the name of the favored track.
+	 * @return string The name of the favored track.
 	 */
 	public function getName(): string;
 
 	/**
-	 * Sets the name of the favorite track.
-	 * @param string $name The name of the favorite track.
+	 * Sets the name of the favored track.
+	 * @param string $name The name of the favored track.
 	 */
 	public function setName( string $name ): void;
 
@@ -35,14 +35,14 @@ interface FavoriteEntityInterface extends PersistableEntityInterface
 	public function setUsersUri( string $usersUri ): void;
 
 	/**
-	 * Gets the timestamp when the favorite track has been created.
-	 * @return DateTimeImmutable The timestamp when the favorite track has been created.
+	 * Gets the timestamp when the favored track has been created.
+	 * @return DateTimeImmutable The timestamp when the favored track has been created.
 	 */
 	public function getTimestampCreated(): DateTimeImmutable;
 
 	/**
-	 * Sets the timestamp when the favorite track has been created.
-	 * @param DateTimeImmutable $timestampCreated The timestamp when the favorite track has been created.
+	 * Sets the timestamp when the favored track has been created.
+	 * @param DateTimeImmutable $timestampCreated The timestamp when the favored track has been created.
 	 */
 	public function setTimestampCreated( DateTimeImmutable $timestampCreated ): void;
 }

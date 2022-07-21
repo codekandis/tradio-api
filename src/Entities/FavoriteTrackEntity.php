@@ -4,14 +4,14 @@ namespace CodeKandis\TradioApi\Entities;
 use DateTimeImmutable;
 
 /**
- * Represents a favorite track.
+ * Represents a favored track.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoriteEntity extends AbstractPersistableEntity implements FavoriteEntityInterface
+class FavoriteTrackEntity extends AbstractPersistableEntity implements FavoriteTrackEntityInterface
 {
 	/**
-	 * Stores the name of the favorite track.
+	 * Stores the name of the favored track.
 	 * @var string
 	 */
 	public string $name = '';
@@ -23,7 +23,7 @@ class FavoriteEntity extends AbstractPersistableEntity implements FavoriteEntity
 	public string $usersUri = '';
 
 	/**
-	 * Stores the timestamp when the favorite has been created.
+	 * Stores the timestamp when the favored track has been created.
 	 * @var DateTimeImmutable
 	 */
 	public DateTimeImmutable $timestampCreated;
@@ -37,7 +37,7 @@ class FavoriteEntity extends AbstractPersistableEntity implements FavoriteEntity
 	}
 
 	/**
-	 * Initializes the favorite track.
+	 * Initializes the favored track.
 	 */
 	public function initialize(): void
 	{

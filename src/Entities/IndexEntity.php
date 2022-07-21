@@ -14,10 +14,10 @@ class IndexEntity extends AbstractEntity implements IndexEntityInterface
 	public string $stationsUri = '';
 
 	/**
-	 * Stores the URI of the favorites.
+	 * Stores the URI of the favored tracks.
 	 * @var string
 	 */
-	public string $favoritesUri = '';
+	public string $favoriteTracksUri = '';
 
 	/**
 	 * Stores the URI of the users.
@@ -44,17 +44,17 @@ class IndexEntity extends AbstractEntity implements IndexEntityInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getFavoritesUri(): string
+	public function getFavoriteTracksUri(): string
 	{
-		return $this->stationsUri;
+		return $this->favoriteTracksUri;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setFavoritesUri( string $favoritesUri ): void
+	public function setFavoriteTracksUri( string $favoriteTracksUri ): void
 	{
-		$this->favoritesUri = $favoritesUri;
+		$this->favoriteTracksUri = $favoriteTracksUri;
 	}
 
 	/**

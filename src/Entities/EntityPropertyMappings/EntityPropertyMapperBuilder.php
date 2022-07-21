@@ -4,7 +4,7 @@ namespace CodeKandis\TradioApi\Entities\EntityPropertyMappings;
 use CodeKandis\Entities\EntityPropertyMappings\EntityPropertyMapper;
 use CodeKandis\Entities\EntityPropertyMappings\EntityPropertyMapperInterface;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntity;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\UserEntity;
 use ReflectionException;
@@ -38,9 +38,9 @@ class EntityPropertyMapperBuilder implements EntityPropertyMapperBuilderInterfac
 	 * {@inheritDoc}
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 */
-	public function buildFavoriteEntityPropertyMapper(): EntityPropertyMapperInterface
+	public function buildFavoriteTrackEntityPropertyMapper(): EntityPropertyMapperInterface
 	{
-		return new EntityPropertyMapper( FavoriteEntity::class, new FavoriteEntityPropertyMappings() );
+		return new EntityPropertyMapper( FavoriteTrackEntity::class, new FavoriteTrackEntityPropertyMappings() );
 	}
 
 	/**

@@ -12,7 +12,7 @@ use CodeKandis\TradioApi\Entities\Enumerations\DateTimeFormats;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoriteEntityPropertyMappings extends AbstractPersistableEntityPropertyMappings
+class FavoriteTrackEntityPropertyMappings extends AbstractPersistableEntityPropertyMappings
 {
 	/**
 	 * Constructor method.

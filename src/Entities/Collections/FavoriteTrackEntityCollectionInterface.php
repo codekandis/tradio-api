@@ -3,25 +3,25 @@ namespace CodeKandis\TradioApi\Entities\Collections;
 
 use CodeKandis\Entities\Collections\EntityCollectionInterface;
 use CodeKandis\TradioApi\Entities\EntityInterface;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
 
 /**
  * Represents the interface of any collection of favorite track entities.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-interface FavoriteEntityCollectionInterface extends EntityCollectionInterface
+interface FavoriteTrackEntityCollectionInterface extends EntityCollectionInterface
 {
 	/**
-	 * Gets the current favorite track.
-	 * @return FavoriteEntityInterface The current favorite track.
+	 * Gets the current favored track.
+	 * @return FavoriteTrackEntityInterface The current favored track.
 	 */
 	public function current(): EntityInterface;
 
 	/**
-	 * Gets the favorite track at the specified index.
-	 * @param int $index The index of the favorite track.
-	 * @return FavoriteEntityInterface The favorite track to get.
+	 * Gets the favored track at the specified index.
+	 * @param int $index The index of the favored track.
+	 * @return FavoriteTrackEntityInterface The favored track to get.
 	 */
 	public function offsetGet( $index ): EntityInterface;
 }

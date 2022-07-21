@@ -66,25 +66,25 @@ interface ApiUriBuilderInterface
 	 * @param string $userId The ID of the user.
 	 * @return string The URI of the tracks favored by the user.
 	 */
-	public function buildUserFavoritesUri( string $userId ): string;
+	public function buildUserFavoriteTracksUri( string $userId ): string;
 
 	/**
-	 * Builds the URI of the favorite tracks.
-	 * @return string The URI of the favorite tracks.
+	 * Builds the URI of the favored tracks.
+	 * @return string The URI of the favored tracks.
 	 */
-	public function buildFavoritesUri(): string;
+	public function buildFavoriteTracksUri(): string;
 
 	/**
-	 * Builds the URI of a specific favorite track.
-	 * @param string $favoriteId The ID of the favorite track.
-	 * @return string The URI of the favorite track.
+	 * Builds the URI of a specific favored track.
+	 * @param string $favoriteTrackId The ID of the favored track.
+	 * @return string The URI of the favored track.
 	 */
-	public function buildFavoriteUri( string $favoriteId ): string;
+	public function buildFavoriteTrackUri( string $favoriteTrackId ): string;
 
 	/**
 	 * Builds the URI of the users favoring a specific track.
-	 * @param string $favoriteId The ID of the favorite track.
+	 * @param string $favoriteTrackId The ID of the favored track.
 	 * @return string The URI of the users favoring the track.
 	 */
-	public function buildFavoriteUsersUri( string $favoriteId ): string;
+	public function buildFavoriteTrackUsersUri( string $favoriteTrackId ): string;
 }

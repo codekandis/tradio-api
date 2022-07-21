@@ -3,7 +3,7 @@ namespace CodeKandis\TradioApi\Persistence\MariaDb\Repositories;
 
 use CodeKandis\Persistence\Repositories\RepositoryInterface;
 use CodeKandis\TradioApi\Entities\Collections\UserEntityCollectionInterface;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
 use CodeKandis\TradioApi\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Entities\UserEntityInterface;
 
@@ -35,9 +35,9 @@ interface UsersRepositoryInterface extends RepositoryInterface
 	public function readUsersByStationId( StationEntityInterface $station ): UserEntityCollectionInterface;
 
 	/**
-	 * Reads all users who favored a specific favorite track.
-	 * @param FavoriteEntityInterface $favorite The favorite track with the ID to search for.
+	 * Reads all users who favored a specific favored track.
+	 * @param FavoriteTrackEntityInterface $favoriteTrack The favored track with the ID to search for.
 	 * @return UserEntityCollectionInterface The users.
 	 */
-	public function readUsersByFavoriteId( FavoriteEntityInterface $favorite ): UserEntityCollectionInterface;
+	public function readUsersByFavoriteTrackId( FavoriteTrackEntityInterface $favoriteTrack ): UserEntityCollectionInterface;
 }

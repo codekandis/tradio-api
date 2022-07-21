@@ -11,8 +11,8 @@ use CodeKandis\Tiphy\Throwables\ErrorInformation;
 use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntity;
 use CodeKandis\TradioApi\Entities\CurrentTrackEntityInterface;
-use CodeKandis\TradioApi\Entities\FavoriteEntity;
-use CodeKandis\TradioApi\Entities\FavoriteEntityInterface;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntity;
+use CodeKandis\TradioApi\Entities\FavoriteTrackEntityInterface;
 use CodeKandis\TradioApi\Entities\StationEntity;
 use CodeKandis\TradioApi\Entities\StationEntityInterface;
 use CodeKandis\TradioApi\Entities\UriExtenders\CurrentTrackApiUriExtender;
@@ -20,7 +20,7 @@ use CodeKandis\TradioApi\Errors\CurlException;
 use CodeKandis\TradioApi\Errors\StationsErrorCodes;
 use CodeKandis\TradioApi\Errors\StationsErrorMessages;
 use CodeKandis\TradioApi\Http\Readers\CurrentTrackReader;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\StationsRepository;
 use JsonException;
 use ReflectionException;
@@ -85,14 +85,14 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 			return;
 		}
 
-		$favorite = $this->readFavoriteByName(
-			FavoriteEntity::fromArray(
+		$favoriteTrack = $this->readFavoriteTrackByName(
+			FavoriteTrackEntity::fromArray(
 				[
 					'name' => $currentTrack->getName()
 				]
 			)
 		);
-		$this->extendUris( $currentTrack, $station, $favorite );
+		$this->extendUris( $currentTrack, $station, $favoriteTrack );
 
 		( new JsonResponder(
 			StatusCodes::OK,
@@ -116,15 +116,15 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 	 * Extends the URIs of a currently playing track.
 	 * @param CurrentTrackEntityInterface $currentTrack The currently playing track to extend its URIs.
 	 * @param StationEntityInterface $station The station currently playing the track.
-	 * @param ?FavoriteEntityInterface $favorite The favorite track whom the currently playing track is related with.
+	 * @param ?FavoriteTrackEntityInterface $favoriteTrack The favored track whom the currently playing track is related with.
 	 */
-	private function extendUris( CurrentTrackEntityInterface $currentTrack, StationEntityInterface $station, ?FavoriteEntityInterface $favorite ): void
+	private function extendUris( CurrentTrackEntityInterface $currentTrack, StationEntityInterface $station, ?FavoriteTrackEntityInterface $favoriteTrack ): void
 	{
 		( new CurrentTrackApiUriExtender(
 			$this->getApiUriBuilder(),
 			$currentTrack,
 			$station,
-			$favorite
+			$favoriteTrack
 		) )
 			->extend();
 	}
@@ -170,9 +170,9 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 	}
 
 	/**
-	 * Reads a favorite track by its name.
-	 * @param FavoriteEntityInterface $favorite The favorite track with the name to search for.
-	 * @return ?FavoriteEntityInterface The favorite track if found, otherwise null.
+	 * Reads a favored track by its name.
+	 * @param FavoriteTrackEntityInterface $favoriteTrack The favored track with the name to search for.
+	 * @return ?FavoriteTrackEntityInterface The favored track if found, otherwise null.
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
@@ -180,11 +180,11 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readFavoriteByName( FavoriteEntityInterface $favorite ): ?FavoriteEntityInterface
+	private function readFavoriteTrackByName( FavoriteTrackEntityInterface $favoriteTrack ): ?FavoriteTrackEntityInterface
 	{
-		return ( new FavoritesRepository(
+		return ( new FavoriteTracksRepository(
 			$this->getPersistenceConnector()
 		) )
-			->readFavoriteByName( $favorite );
+			->readFavoriteTrackByName( $favoriteTrack );
 	}
 }

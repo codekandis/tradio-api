@@ -48,11 +48,11 @@ interface CurrentTrackEntityInterface extends EntityInterface
 	 * Gets the URI of the persisted favored track of the currently playing track.
 	 * @return ?string The URI of the persisted favored track of the currently playing track.
 	 */
-	public function getFavoriteUri(): ?string;
+	public function getFavoriteTrackUri(): ?string;
 
 	/**
 	 * Sets the URI of the persisted favored track of the currently playing track.
-	 * @param ?string $favoriteUri The URI of the persisted favored track of the currently playing track.
+	 * @param ?string $favoriteTrackUri The URI of the persisted favored track of the currently playing track.
 	 */
-	public function setFavoriteUri( ?string $favoriteUri ): void;
+	public function setFavoriteTrackUri( ?string $favoriteTrackUri ): void;
 }

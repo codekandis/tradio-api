@@ -21,16 +21,16 @@ interface IndexEntityInterface extends EntityInterface
 	public function setStationsUri( string $stationsUri ): void;
 
 	/**
-	 * Stores the URI of the favored.
+	 * Stores the URI of the favored tracks.
 	 * @return string The URI of the favored tracks.
 	 */
-	public function getFavoritesUri(): string;
+	public function getFavoriteTracksUri(): string;
 
 	/**
-	 * Stores the URI of the favored.
-	 * @param string $favoritesUri The URI of the favored tracks.
+	 * Stores the URI of the favored tracks.
+	 * @param string $favoriteTracksUri The URI of the favored tracks.
 	 */
-	public function setFavoritesUri( string $favoritesUri ): void;
+	public function setFavoriteTracksUri( string $favoriteTracksUri ): void;
 
 	/**
 	 * Stores the URI of the users.

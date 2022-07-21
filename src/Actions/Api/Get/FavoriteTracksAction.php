@@ -8,9 +8,9 @@ use CodeKandis\Persistence\StatementPreparationFailedException;
 use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\TradioApi\Actions\AbstractWithPersistenceConnectorAndApiUriBuilderAction;
-use CodeKandis\TradioApi\Entities\Collections\FavoriteEntityCollectionInterface;
-use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteApiUriExtender;
-use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoritesRepository;
+use CodeKandis\TradioApi\Entities\Collections\FavoriteTrackEntityCollectionInterface;
+use CodeKandis\TradioApi\Entities\UriExtenders\FavoriteTrackApiUriExtender;
+use CodeKandis\TradioApi\Persistence\MariaDb\Repositories\FavoriteTracksRepository;
 use JsonException;
 use ReflectionException;
 
@@ -19,7 +19,7 @@ use ReflectionException;
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class FavoritesAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
+class FavoriteTracksAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAction
 {
 	/**
 	 * {@inheritDoc}
@@ -33,13 +33,13 @@ class FavoritesAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAc
 	 */
 	public function execute(): void
 	{
-		$favorites = $this->readFavorites();
-		$this->extendUris( $favorites );
+		$favoriteTracks = $this->readFavoriteTracks();
+		$this->extendUris( $favoriteTracks );
 
 		( new JsonResponder(
 			StatusCodes::OK,
 			[
-				'favorites' => $favorites,
+				'favoriteTracks' => $favoriteTracks,
 			]
 		) )
 			->respond();
@@ -47,21 +47,21 @@ class FavoritesAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAc
 
 	/**
 	 * Extends the URIs of a list of favored tracks.
-	 * @param FavoriteEntityCollectionInterface $favorites The favored tracks to extend their URIs.
+	 * @param FavoriteTrackEntityCollectionInterface $favoriteTracks The favored tracks to extend their URIs.
 	 */
-	private function extendUris( FavoriteEntityCollectionInterface $favorites ): void
+	private function extendUris( FavoriteTrackEntityCollectionInterface $favoriteTracks ): void
 	{
 		$apiUriBuilder = $this->getApiUriBuilder();
-		foreach ( $favorites as $favorite )
+		foreach ( $favoriteTracks as $favoriteTrack )
 		{
-			( new FavoriteApiUriExtender( $apiUriBuilder, $favorite ) )
+			( new FavoriteTrackApiUriExtender( $apiUriBuilder, $favoriteTrack ) )
 				->extend();
 		}
 	}
 
 	/**
 	 * Reads all favored tracks.
-	 * @return FavoriteEntityCollectionInterface The favored tracks.
+	 * @return FavoriteTrackEntityCollectionInterface The favored tracks.
 	 * @throws ReflectionException The favorite track entity class to reflect does not exist.
 	 * @throws ReflectionException An error occurred during the creation of the favorite track entity.
 	 * @throws StatementPreparationFailedException The preparation of the statement failed.
@@ -69,11 +69,11 @@ class FavoritesAction extends AbstractWithPersistenceConnectorAndApiUriBuilderAc
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
 	 */
-	private function readFavorites(): FavoriteEntityCollectionInterface
+	private function readFavoriteTracks(): FavoriteTrackEntityCollectionInterface
 	{
-		return ( new FavoritesRepository(
+		return ( new FavoriteTracksRepository(
 			$this->getPersistenceConnector()
 		) )
-			->readFavorites();
+			->readFavoriteTracks();
 	}
 }

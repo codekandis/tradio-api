@@ -23,7 +23,7 @@ class CurrentTrackEntityPropertyMappings extends AbstractEntityPropertyMappings
 			new EntityPropertyMapping( 'name', null ),
 			new EntityPropertyMapping( 'stationId', null ),
 			new EntityPropertyMapping( 'stationUri', null ),
-			new EntityPropertyMapping( 'favoriteUri', null ),
+			new EntityPropertyMapping( 'favoriteTrackUri', null ),
 			...$entityPropertyMappings
 		);
 	}
