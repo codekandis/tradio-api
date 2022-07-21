@@ -1,7 +1,7 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Configurations;
 
-use CodeKandis\TradioApi\Entities\Enumerations\UriIdentifiers;
+use CodeKandis\TradioApi\Environment\Entities\Enumerations\UriIdentifiers;
 
 return [
 	'schema'       => 'https',
