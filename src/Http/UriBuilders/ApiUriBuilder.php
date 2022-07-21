@@ -2,6 +2,7 @@
 namespace CodeKandis\TradioApi\Http\UriBuilders;
 
 use CodeKandis\Tiphy\Http\UriBuilders\AbstractUriBuilder;
+use CodeKandis\TradioApi\Entities\Enumerations\UriIdentifiers;
 
 /**
  * Represents an API URI builder.
@@ -15,7 +16,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildIndexUri(): string
 	{
-		return $this->build( 'index' );
+		return $this->build( UriIdentifiers::INDEX );
 	}
 
 	/**
@@ -23,7 +24,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildStationsUri(): string
 	{
-		return $this->build( 'stations' );
+		return $this->build( UriIdentifiers::STATIONS );
 	}
 
 	/**
@@ -31,7 +32,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildStationUri( string $stationId ): string
 	{
-		return $this->build( 'station', $stationId );
+		return $this->build( UriIdentifiers::STATION, $stationId );
 	}
 
 	/**
@@ -39,7 +40,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildCurrentTrackUri( string $stationId ): string
 	{
-		return $this->build( 'currentTrack', $stationId );
+		return $this->build( UriIdentifiers::CURRENT_TRACK, $stationId );
 	}
 
 	/**
@@ -47,7 +48,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildStationUsersUri( string $stationId ): string
 	{
-		return $this->build( 'stationUsers', $stationId );
+		return $this->build( UriIdentifiers::STATION_USERS, $stationId );
 	}
 
 	/**
@@ -55,7 +56,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildUsersUri(): string
 	{
-		return $this->build( 'users' );
+		return $this->build( UriIdentifiers::USERS );
 	}
 
 	/**
@@ -63,7 +64,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildUserUri( string $userId ): string
 	{
-		return $this->build( 'user', $userId );
+		return $this->build( UriIdentifiers::USER, $userId );
 	}
 
 	/**
@@ -71,7 +72,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildUserStationsUri( string $userId ): string
 	{
-		return $this->build( 'userStations', $userId );
+		return $this->build( UriIdentifiers::USER_STATIONS, $userId );
 	}
 
 	/**
@@ -79,7 +80,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildUserFavoriteTracksUri( string $userId ): string
 	{
-		return $this->build( 'userFavoriteTracks', $userId );
+		return $this->build( UriIdentifiers::USER_FAVORITE_TRACKS, $userId );
 	}
 
 	/**
@@ -87,7 +88,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildFavoriteTracksUri(): string
 	{
-		return $this->build( 'favoriteTracks' );
+		return $this->build( UriIdentifiers::FAVORITE_TRACKS );
 	}
 
 	/**
@@ -95,7 +96,7 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildFavoriteTrackUri( string $favoriteTrackId ): string
 	{
-		return $this->build( 'favoriteTrack', $favoriteTrackId );
+		return $this->build( UriIdentifiers::FAVORITE_TRACK, $favoriteTrackId );
 	}
 
 	/**
@@ -103,6 +104,6 @@ class ApiUriBuilder extends AbstractUriBuilder implements ApiUriBuilderInterface
 	 */
 	public function buildFavoriteTrackUsersUri( string $favoriteTrackId ): string
 	{
-		return $this->build( 'favoriteTrackUsers', $favoriteTrackId );
+		return $this->build( UriIdentifiers::FAVORITE_TRACK_USERS, $favoriteTrackId );
 	}
 }
