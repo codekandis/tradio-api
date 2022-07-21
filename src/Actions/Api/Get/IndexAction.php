@@ -5,27 +5,40 @@ use CodeKandis\Tiphy\Http\Responses\JsonResponder;
 use CodeKandis\Tiphy\Http\Responses\StatusCodes;
 use CodeKandis\TradioApi\Actions\AbstractWithApiUriBuilderAction;
 use CodeKandis\TradioApi\Entities\IndexEntity;
+use CodeKandis\TradioApi\Entities\IndexEntityInterface;
 use CodeKandis\TradioApi\Entities\UriExtenders\IndexApiUriExtender;
 use JsonException;
 
+/**
+ * Represents the action to retrieve the API index.
+ * @package codekandis/tradio-api
+ * @author Christian Ramelow <info@codekandis.net>
+ */
 class IndexAction extends AbstractWithApiUriBuilderAction
 {
 	/**
-	 * @throws JsonException
+	 * {@inheritDoc}
+	 * @throws JsonException An error occurred during the creation of the JSON response.
 	 */
 	public function execute(): void
 	{
 		$index = new IndexEntity;
 		$this->extendUris( $index );
 
-		$responderData = [
-			'index' => $index,
-		];
-		( new JsonResponder( StatusCodes::OK, $responderData ) )
+		( new JsonResponder(
+			StatusCodes::OK,
+			[
+				'index' => $index,
+			]
+		) )
 			->respond();
 	}
 
-	private function extendUris( $index ): void
+	/**
+	 * Extends the URIs of an index.
+	 * @param IndexEntityInterface $index The index to extend its URIs.
+	 */
+	private function extendUris( IndexEntityInterface $index ): void
 	{
 		( new IndexApiUriExtender(
 			$this->getApiUriBuilder(),
