@@ -1,6 +1,13 @@
 <?php declare( strict_types = 1 );
 namespace CodeKandis\TradioApi\Configurations\Plain;
 
+use const E_ALL;
+
 return [
-	'release' => '0.7.0'
+	'dsn'           => '',
+	'displayErrors' => false,
+	'errorTypes'    => E_ALL,
+	'environment'   => 'production',
+	'release'       => '0.7.0',
+	'serverName'    => 'api.tradio.codekandis'
 ];
