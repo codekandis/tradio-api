@@ -43,7 +43,6 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 	 * @throws StatementExecutionFailedException The execution of the statement failed.
 	 * @throws SettingFetchModeFailedException The setting of the fetch mode of the statement failed.
 	 * @throws FetchingResultFailedException The fetching of the statment result failed.
-	 * @throws CurlException An error occured during a CURL operation.
 	 * @throws JsonException An error occurred during the creation of the JSON response.
 	 */
 	public function execute(): void
@@ -77,7 +76,7 @@ class CurrentTrackAction extends AbstractWithPersistenceConnectorAndApiUriBuilde
 		catch ( CurlException $exception )
 		{
 			( new JsonResponder(
-				StatusCodes::NOT_FOUND,
+				StatusCodes::SERVICE_UNAVAILABLE,
 				null,
 				new ErrorInformation( StationsErrorCodes::STATION_NOT_REACHABLE, StationsErrorMessages::STATION_NOT_REACHABLE, $inputData )
 			) )
