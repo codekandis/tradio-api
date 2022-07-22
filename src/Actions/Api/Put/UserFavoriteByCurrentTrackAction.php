@@ -100,7 +100,22 @@ class UserFavoriteByCurrentTrackAction extends AbstractWithPersistenceConnectorA
 			return;
 		}
 
-		$currentTrack = $this->readCurrentTrack( $station );
+		try
+		{
+			$currentTrack = $this->readCurrentTrack( $station );
+		}
+		catch ( CurlException $exception )
+		{
+			( new JsonResponder(
+				StatusCodes::SERVICE_UNAVAILABLE,
+				null,
+				new ErrorInformation( StationsErrorCodes::STATION_NOT_REACHABLE, StationsErrorMessages::STATION_NOT_REACHABLE, $inputData )
+			) )
+				->respond();
+
+			return;
+		}
+
 		$this->writeFavoriteByUserId(
 			FavoriteEntity::fromArray(
 				[
@@ -169,13 +184,14 @@ class UserFavoriteByCurrentTrackAction extends AbstractWithPersistenceConnectorA
 	 */
 	private function readCurrentTrack( StationEntityInterface $station ): CurrentTrackEntityInterface
 	{
-		$currentTrackName = ( new CurrentTrackReader() )
-			->read( $station->tracklistUri, $station->currentTrackXPath );
-
 		return CurrentTrackEntity::fromArray(
 			[
-				'name'      => $currentTrackName,
-				'stationId' => $station->getId()
+				'stationId' => $station->getId(),
+				'name'      => ( new CurrentTrackReader() )
+					->read(
+						$station->getTracklistUri(),
+						$station->getCurrentTrackXPath()
+					)
 			]
 		);
 	}
