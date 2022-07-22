@@ -170,7 +170,7 @@ class CurrentTrackAction extends AbstractAction
 				'name'      => ( new CurrentTrackNameReader() )
 					->read(
 						$station->getTracklistUri(),
-						$station->getCurrentTrackXPath()
+						$station->getCurrentTrackSelector()
 					)
 			]
 		);

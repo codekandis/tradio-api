@@ -9,18 +9,6 @@ namespace CodeKandis\TradioApi\Environment\Entities;
 interface StationEntityInterface extends PersistableEntityInterface
 {
 	/**
-	 * Gets the server type of the station.
-	 * @return string The server type of the station.
-	 */
-	public function getServerType(): string;
-
-	/**
-	 * Sets the server type of the station.
-	 * @param string $serverType The server type of the station.
-	 */
-	public function setServerType( string $serverType ): void;
-
-	/**
 	 * Gets the name of the station.
 	 * @return string The name of the station.
 	 */
@@ -57,16 +45,28 @@ interface StationEntityInterface extends PersistableEntityInterface
 	public function setTracklistUri( string $tracklistUri ): void;
 
 	/**
-	 * Gets the XPath to fetch the currently playing track of the station.
-	 * @return string The XPath to fetch the currently playing track of the station.
+	 * Gets the type of the tracklist of the station.
+	 * @return string The type of the tracklist of the station.
 	 */
-	public function getCurrentTrackXPath(): string;
+	public function getTracklistType(): string;
 
 	/**
-	 * Sets the XPath to fetch the currently playing track of the station.
-	 * @param string $currentTrackXPath The XPath to fetch the currently playing track of the station.
+	 * Sets the type of the tracklist of the station.
+	 * @param string $tracklistType The type of the tracklist of the station.
 	 */
-	public function setCurrentTrackXPath( string $currentTrackXPath ): void;
+	public function setTracklistType( string $tracklistType ): void;
+
+	/**
+	 * Gets the selector to fetch the currently playing track of the station.
+	 * @return string The selector to fetch the currently playing track of the station.
+	 */
+	public function getCurrentTrackSelector(): string;
+
+	/**
+	 * Sets the selector to fetch the currently playing track of the station.
+	 * @param string $currentTrackSelector The selector to fetch the currently playing track of the station.
+	 */
+	public function setCurrentTrackSelector( string $currentTrackSelector ): void;
 
 	/**
 	 * Gets the URI of the currently playing track of the station.

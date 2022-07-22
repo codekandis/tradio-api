@@ -9,12 +9,6 @@ namespace CodeKandis\TradioApi\Environment\Entities;
 class StationEntity extends AbstractPersistableEntity implements StationEntityInterface
 {
 	/**
-	 * Stores the server Type of the station.
-	 * @var string
-	 */
-	public string $serverType = '';
-
-	/**
 	 * Stores the name of the station.
 	 * @var string
 	 */
@@ -33,10 +27,16 @@ class StationEntity extends AbstractPersistableEntity implements StationEntityIn
 	public string $tracklistUri = '';
 
 	/**
-	 * Stores the XPath to fetch the currently playing track.
+	 * Stores the tracklist type of the station.
 	 * @var string
 	 */
-	public string $currentTrackXPath = '';
+	public string $tracklistType = '';
+
+	/**
+	 * Stores the selector to fetch the currently playing track.
+	 * @var string
+	 */
+	public string $currentTrackSelector = '';
 
 	/**
 	 * Stores the URI of the currently playing track.
@@ -49,22 +49,6 @@ class StationEntity extends AbstractPersistableEntity implements StationEntityIn
 	 * @var string
 	 */
 	public string $usersUri = '';
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getServerType(): string
-	{
-		return $this->serverType;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function setServerType( string $serverType ): void
-	{
-		$this->serverType = $serverType;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -117,17 +101,33 @@ class StationEntity extends AbstractPersistableEntity implements StationEntityIn
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getCurrentTrackXPath(): string
+	public function getTracklistType(): string
 	{
-		return $this->currentTrackXPath;
+		return $this->tracklistType;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setCurrentTrackXPath( string $currentTrackXPath ): void
+	public function setTracklistType( string $tracklistType ): void
 	{
-		$this->currentTrackXPath = $currentTrackXPath;
+		$this->tracklistType = $tracklistType;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getCurrentTrackSelector(): string
+	{
+		return $this->currentTrackSelector;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setCurrentTrackSelector( string $currentTrackSelector ): void
+	{
+		$this->currentTrackSelector = $currentTrackSelector;
 	}
 
 	/**
