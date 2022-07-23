@@ -32,7 +32,7 @@ use CodeKandis\TradioApi\Environment\Persistence\MariaDb\Repositories\FavoriteTr
 use CodeKandis\TradioApi\Environment\Persistence\MariaDb\Repositories\StationsRepository;
 use CodeKandis\TradioApi\Environment\Persistence\MariaDb\Repositories\UsersRepository;
 use CodeKandis\TradioApi\Environment\Readers\CurrentTrackNameNotExtractableException;
-use CodeKandis\TradioApi\Environment\Readers\CurrentTrackNameReader;
+use CodeKandis\TradioApi\Environment\Readers\CurrentTrackNameReaderCreator;
 use CodeKandis\TradioApi\Environment\Readers\TracklistNotReadableException;
 use JsonException;
 use ReflectionException;
@@ -191,7 +191,10 @@ class UserFavoriteTrackByCurrentTrackAction extends AbstractAction
 		return CurrentTrackEntity::fromArray(
 			[
 				'stationId' => $station->getId(),
-				'name'      => ( new CurrentTrackNameReader() )
+				'name'      => ( new CurrentTrackNameReaderCreator() )
+					->create(
+						$station->getTracklistType()
+					)
 					->read(
 						$station->getTracklistUri(),
 						$station->getCurrentTrackSelector()

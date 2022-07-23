@@ -3,19 +3,14 @@ namespace CodeKandis\TradioApi\Environment\Readers;
 
 use CodeKandis\CurlyBrace\Headers\RequestHeader;
 use CodeKandis\CurlyBrace\HttpRequest;
-use DOMDocument;
-use DOMXPath;
-use ReflectionException;
-use function mb_strtolower;
 use function sprintf;
-use const LIBXML_NOERROR;
 
 /**
- * Represents a current track reader.
+ * Represents the base class of any currently playing track name reader.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
-class CurrentTrackNameReader implements CurrentTrackNameReaderInterface
+abstract class AbstractCurrentTrackNameReader implements CurrentTrackNameReaderInterface
 {
 	/**
 	 * Represents the error message if a tracklist is not readable.
@@ -66,36 +61,22 @@ class CurrentTrackNameReader implements CurrentTrackNameReaderInterface
 
 	/**
 	 * Extracts the currently playing track name from the tracklist.
-	 * @param string $trackList The tracklist to read from.
-	 * @param string $xPathSelector The XPath selector used to read the currently playing track name.
+	 * @param string $tracklist The tracklist to extract from.
+	 * @param string $selector The selector used to extract the currently playing track name.
 	 * @return string The currently playing track name.
 	 * @throws CurrentTrackNameNotExtractableException The currently playing track name is not extractable.
 	 */
-	private function extractCurrentTrackName( string $trackList, string $xPathSelector ): string
-	{
-		$domDocument = new DOMDocument();
-		$domDocument->loadHTML( $trackList, LIBXML_NOERROR );
-
-		$currentTrackName = ( new DOMXPath( $domDocument ) )
-			->evaluate( $xPathSelector );
-
-		if ( '' === $currentTrackName )
-		{
-			throw new TracklistNotReadableException( static::ERROR_CURRENT_TRACK_NAME_NOT_EXTRACTABLE );
-		}
-
-		return mb_strtolower( $currentTrackName );
-	}
+	abstract protected function extractCurrentTrackName( string $tracklist, string $selector ): string;
 
 	/**
 	 * {@inheritDoc}
 	 * @throws TracklistNotReadableException The tracklist is not readable.
 	 * @throws CurrentTrackNameNotExtractableException The currently playing track name is not extractable.
 	 */
-	public function read( string $uri, string $xPathSelector ): string
+	public function read( string $tracklistUri, string $selector ): string
 	{
-		$tracklist = $this->readTracklist( $uri );
+		$tracklist = $this->readTracklist( $tracklistUri );
 
-		return $this->extractCurrentTrackName( $tracklist, $xPathSelector );
+		return $this->extractCurrentTrackName( $tracklist, $selector );
 	}
 }
