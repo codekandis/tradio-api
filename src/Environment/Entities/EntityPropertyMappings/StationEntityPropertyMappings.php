@@ -20,11 +20,11 @@ class StationEntityPropertyMappings extends AbstractPersistableEntityPropertyMap
 	public function __construct( EntityPropertyMappingInterface ...$entityPropertyMappings )
 	{
 		parent::__construct(
-			new EntityPropertyMapping( 'serverType', null ),
 			new EntityPropertyMapping( 'name', null ),
 			new EntityPropertyMapping( 'streamUri', null ),
 			new EntityPropertyMapping( 'tracklistUri', null ),
-			new EntityPropertyMapping( 'currentTrackXPath', null ),
+			new EntityPropertyMapping( 'tracklistType', null ),
+			new EntityPropertyMapping( 'currentTrackSelector', null ),
 			new EntityPropertyMapping( 'currentTrackUri', null ),
 			new EntityPropertyMapping( 'usersUri', null ),
 			...$entityPropertyMappings

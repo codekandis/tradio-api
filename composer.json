@@ -31,6 +31,7 @@
 		"codekandis/configurations": "^0",
 		"codekandis/entities": "^0",
 		"codekandis/curly-brace": "^0",
+		"codekandis/json-codec": "^2",
 		"codekandis/persistence": "^0",
 		"codekandis/sentry-client": "^1",
 		"codekandis/tiphy": "^0",
