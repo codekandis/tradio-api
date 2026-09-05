@@ -62,7 +62,7 @@ class IndexEntity extends AbstractEntity implements IndexEntityInterface
 	 */
 	public function getUsersUri(): string
 	{
-		return $this->stationsUri;
+		return $this->usersUri;
 	}
 
 	/**
