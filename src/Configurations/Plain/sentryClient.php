@@ -8,6 +8,6 @@ return [
 	'displayErrors' => false,
 	'errorTypes'    => E_ALL,
 	'environment'   => 'production',
-	'release'       => '0.10.0',
+	'release'       => '0.10.1',
 	'serverName'    => 'api.tradio.codekandis'
 ];
