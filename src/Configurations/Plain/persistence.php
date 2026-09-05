@@ -7,6 +7,6 @@ return [
 	'driver'       => PersistenceDrivers::MYSQL,
 	'host'         => 'localhost',
 	'databaseName' => 'api.tradio.codekandis',
-	'username'     => 'root',
-	'passphrase'   => 'root',
+	'username'     => 'api.tradio.codekandis',
+	'passphrase'   => 'api.tradio.codekandis',
 ];

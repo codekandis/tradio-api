@@ -6,9 +6,9 @@ use CodeKandis\Persistence\ConnectorInterface;
 use CodeKandis\SentryClient\SentryClient;
 use CodeKandis\SentryClient\SentryClientInterface;
 use CodeKandis\Tiphy\Actions\AbstractAction as OriginAbstractAction;
-use CodeKandis\TradioApi\Api\Http\UriBuilders\ApiUriBuilder;
 use CodeKandis\TradioApi\Api\Http\UriBuilders\ApiUriBuilderInterface;
 use CodeKandis\TradioApi\Configurations\ConfigurationRegistry;
+use CodeKandis\TradioApi\Environment\Http\UriBuilders\UriBuilderBuilder;
 
 /**
  * Represents the base class of any action.
@@ -42,7 +42,7 @@ abstract class AbstractAction extends OriginAbstractAction
 	protected function getSentryClient(): SentryClientInterface
 	{
 		return $this->sentryClient ??
-			   $this->sentryClient = new SentryClient(
+		       $this->sentryClient = new SentryClient(
 				   ConfigurationRegistry::_()->getSentryClientConfiguration()
 			   );
 	}
@@ -54,9 +54,10 @@ abstract class AbstractAction extends OriginAbstractAction
 	protected function getApiUriBuilder(): ApiUriBuilderInterface
 	{
 		return $this->apiUriBuilder ??
-			   $this->apiUriBuilder = new ApiUriBuilder(
+		       $this->apiUriBuilder = ( new UriBuilderBuilder(
 				   ConfigurationRegistry::_()->getUriBuilderConfiguration()
-			   );
+			   ) )
+				   ->buildApiUriBuilder();
 	}
 
 	/**
@@ -66,10 +67,10 @@ abstract class AbstractAction extends OriginAbstractAction
 	protected function getPersistenceConnector(): ConnectorInterface
 	{
 		return $this->persistenceConnector ??
-			   $this->persistenceConnector = new Connector(
+		       $this->persistenceConnector = new Connector(
 				   ConfigurationRegistry
 					   ::_()
-					   ->getPersistenceConfiguration()
+				       ->getPersistenceConfiguration()
 			   );
 	}
 }
