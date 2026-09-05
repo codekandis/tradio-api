@@ -34,7 +34,7 @@
 		"codekandis/json-codec": "^2",
 		"codekandis/persistence": "^0",
 		"codekandis/sentry-client": "^1",
-		"codekandis/tiphy": "0.41.0",
+		"codekandis/tiphy": "^0",
 		"codekandis/tiphy-authentication-integration": "^0",
 		"codekandis/tiphy-persistence-integration": "^0",
 		"codekandis/tiphy-sentry-client-integration": "^0"
