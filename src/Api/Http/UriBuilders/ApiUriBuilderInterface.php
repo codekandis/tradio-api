@@ -2,7 +2,7 @@
 namespace CodeKandis\TradioApi\Api\Http\UriBuilders;
 
 /**
- * Represents the interface of any APU URI builder.
+ * Represents the interface of any API URI builder.
  * @package codekandis/tradio-api
  * @author Christian Ramelow <info@codekandis.net>
  */
